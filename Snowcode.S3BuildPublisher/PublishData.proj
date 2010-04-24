@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project DefaultTargets="Debug" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="S3BuildPublisher" AssemblyFile="C:\Users\Alan\Projects\SnowCode2010\Snowcode.S3BuildPublisher\Snowcode.S3BuildPublisher\bin\Debug\Snowcode.S3BuildPublisher.dll"/>
+  <Target Name="Debug">
+
+    <S3BuildPublisher
+      awsAccessKeyId="##YOUR-AMAZON-ID-HERE##"
+      awsSecretAccesskey="##YOUR-SECRET-ACCESS-KEY-HERE##"
+      SourceFile="./PublishData.proj"
+      DestinationBucket="steverulesforever"/>
+      
+  </Target>
+  
+</Project>
