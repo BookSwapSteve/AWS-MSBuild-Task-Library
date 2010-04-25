@@ -2,15 +2,19 @@
 <Project DefaultTargets="Debug" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <UsingTask TaskName="S3BuildPublisher" AssemblyFile=".\bin\Debug\Snowcode.S3BuildPublisher.dll"/>
   <UsingTask TaskName="StoreClientDetailsTask" AssemblyFile=".\bin\Debug\Snowcode.S3BuildPublisher.dll"/>
+
+  <ItemGroup>
+    <SourceFiles Include="./PublishData.proj" />
+  </ItemGroup>
   
   <!-- Sample/Debug target for publishing to S3 -->
   <Target Name="Debug">
 
     <S3BuildPublisher
-      awsAccessKeyId="##YOUR-AMAZON-ID-HERE##"
-      awsSecretAccesskey="##YOUR-SECRET-ACCESS-KEY-HERE##"
-      SourceFile="./PublishData.proj"
-      DestinationBucket="steverulesforever"/>
+      EncryptionContainerName ="MySecretContainer"
+      SourceFiles="@(SourceFiles)"
+      DestinationBucket="s3publisher-testbucket-1"
+      PublicRead="true" />
       
   </Target>
 

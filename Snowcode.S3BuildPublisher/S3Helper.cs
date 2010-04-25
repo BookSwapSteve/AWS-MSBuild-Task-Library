@@ -8,34 +8,82 @@ using Amazon.S3;
 
 namespace Snowcode.S3BuildPublisher
 {
+    /// <summary>
+    /// Helper class to connect to Amazon aws S3 and store files.
+    /// </summary>
     public class S3Helper
     {
-       
+        #region Constructors
 
-        public void DoStuff(string bucketName, string awsAccessKeyId ,string awsSecretAccesskey)
+        public S3Helper(string awsAccessKeyId, string awsSecretAccessKey)
         {
-            var s3 = new AmazonS3Client(awsAccessKeyId, awsSecretAccesskey);
-
-            if (!AmazonS3Util.DoesS3BucketExist(bucketName, s3))
-            {
-                var request = new PutBucketRequest
-                {
-                    BucketName = bucketName
-                };
-                s3.PutBucket(request);
-            }
-
-            var or = new PutObjectRequest();
-            or.WithContentBody("Hello from Snowcode cloud hackday in Cambridge, woot,woot!")
-                .WithBucketName(bucketName)
-                .WithKey("mykey3");
-
-            // normally wrapped with a responseWithMetaData
-            s3.PutObject(or);
-
-
+            Client = new AmazonS3Client(awsAccessKeyId, awsSecretAccessKey);
         }
 
+        public S3Helper(AwsClientDetails clientDetails)
+        {
+            Client = new AmazonS3Client(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
+        }
 
-    } // class
-} // namespace
+        #endregion
+
+        #region Properties
+
+        protected AmazonS3Client Client
+        {
+            get;
+            set;
+        }
+
+        #endregion
+
+        #region Public methods
+
+        public void Publish(string[] files, string bucketName, bool publicRead)
+        {
+            CreateBucketIfNeeded(bucketName);
+
+            StoreFiles(files, bucketName, publicRead);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void CreateBucketIfNeeded(string bucketName)
+        {
+            if (!AmazonS3Util.DoesS3BucketExist(bucketName, Client))
+            {
+                var request = new PutBucketRequest { BucketName = bucketName };
+                Client.PutBucket(request);
+            }
+        }
+
+        private void StoreFiles(string[] files, string bucketName, bool publicRead)
+        {
+            foreach (string file in files)
+            {
+                // Use just the filename as the key (aws filename).
+                string key = System.IO.Path.GetFileName(file);
+                StoreFile(file, key, bucketName, publicRead);
+            }
+        }
+
+        private void StoreFile(string file, string key, string bucketName, bool publicRead)
+        {
+            S3CannedACL acl = publicRead ? S3CannedACL.PublicRead : S3CannedACL.Private;
+
+            var request = new PutObjectRequest();
+            request
+                .WithCannedACL(acl)
+                .WithFilePath(file)
+                .WithBucketName(bucketName)
+                .WithKey(key);
+
+            // normally wrapped with a responseWithMetaData
+            Client.PutObject(request);
+        }
+
+        #endregion
+    }
+}
