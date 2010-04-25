@@ -1,0 +1,54 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="..\..\3rdparty\msbuild\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+  <PropertyGroup>
+    <ReportsFolder>.\Build\Reports\</ReportsFolder>
+    <ReleasesFolder>.\Build\Release\</ReleasesFolder>
+    <NUnitPath>..\..\3rdparty\nunit\bin\net-2.0</NUnitPath>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+  </PropertyGroup>
+
+  <Target Name="Build">
+    <Message Text="Building S3 Publisher $(Configuration)" />
+
+    <MSBuild Projects="Snowcode.S3BuildPublisher.sln" Properties="Configuration=$(Configuration)" />
+  </Target>
+
+  <!-- Run Unit Tests -->
+  <Target Name="UnitTest">
+    
+    <Message Text="Unit Tests..." />
+    <RemoveDir Directories="$(ReportsFolder)UnitTests" />
+    <MakeDir Directories="$(ReportsFolder)UnitTests" />
+
+    <CreateItem  Include=".\**\bin\Debug\*.Test.dll" >
+      <Output TaskParameter="Include" ItemName="UnitTestDlls"/>
+    </CreateItem>
+
+    <Message Text="Unit Test Assemblies: %(UnitTestDlls.FileName)" />
+
+    <NUnit Assemblies="%(UnitTestDlls.FullPath)"
+			ToolPath="$(NUnitPath)"
+			ExcludeCategory="IntegrationTest,IntegrationTests"
+			OutputXmlFile="$(ReportsFolder)UnitTests\%(UnitTestDlls.FileName).xml"/>
+  </Target>
+
+  <!-- Run Integration Tests -->
+  <Target Name="IntegrationTest">
+    
+    <Message Text="Integration Tests..." />		
+    <RemoveDir Directories="$(ReportsFolder)IntegrationTests" />
+    <MakeDir Directories="$(ReportsFolder)IntegrationTests" />
+
+    <CreateItem  Include=".\**\bin\Debug\*.IntegrationTests.dll" >
+      <Output TaskParameter="Include" ItemName="IntegrationTestDlls"/>
+    </CreateItem>
+
+    <Message Text="Integration Test Assemblies: %(IntegrationTestDlls.FileName)" />
+
+    <NUnit Assemblies="%(IntegrationTestDlls.FullPath)" 
+			ToolPath="$(NUnitPath)"
+			OutputXmlFile="$(ReportsFolder)IntegrationTests\%(IntegrationTestDlls.FileName).xml" />
+  </Target>
+
+  <!-- Once build and tested use the Publish.proj file to publish the files to AWS S3 -->
+</Project>

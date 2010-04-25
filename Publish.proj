@@ -1,0 +1,43 @@
+﻿<Project DefaultTargets="Publish" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+  <!-- Using this MSBuild project to publish the build output of the project:
+	
+	1) Build the release build of the S3 Build Publisher before calling this project
+	2) On first run the StoreKeys task should be called manually.
+	2.1) enter the appropriate Aws Access Key and Secret key
+	2.2) Run MSBuild Publish.proj /t:StoreKeys
+	2.3) Remove keys to prevent accidental checkin
+
+	Once run the release output files will be published to S3 and will be publically accessible through the bucket name -->
+
+  <UsingTask TaskName="S3BuildPublisher" AssemblyFile=".\Snowcode.S3BuildPublisher\bin\Release\Snowcode.S3BuildPublisher.dll"/>
+  <UsingTask TaskName="StoreClientDetailsTask" AssemblyFile=".\Snowcode.S3BuildPublisher\bin\Release\Snowcode.S3BuildPublisher.dll"/>
+
+  <PropertyGroup>
+    <Bucket>MSBuild-S3-Publisher</Bucket>
+    <Container>MySecretContainer</Container>
+  </PropertyGroup>
+
+  <!-- Include all the output release files -->
+  <ItemGroup>
+    <SourceFiles Include=".\**\bin\Release\*.dll" />
+  </ItemGroup>
+  
+  <!-- Publish the files generated from the build to S3 -->
+  <Target Name="Publish">
+    <S3BuildPublisher
+      EncryptionContainerName ="$(Container)"
+      SourceFiles="@(SourceFiles)"
+      DestinationBucket="$(Bucket)"
+      PublicRead="true" />
+  </Target>
+
+  <!-- Sample target to store AWS credentials -->
+  <Target Name="StoreKeys">
+    <StoreClientDetailsTask
+      EncryptionContainerName ="$(Container)"
+      AwsAccessKeyId="##YOUR-AMAZON-ID-HERE##"
+      AwsSecretAccesskey="##YOUR-SECRET-ACCESS-KEY-HERE##" />
+  </Target>
+  
+</Project>
