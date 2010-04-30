@@ -1,10 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project DefaultTargets="Debug" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask TaskName="S3BuildPublisher" AssemblyFile=".\bin\Debug\Snowcode.S3BuildPublisher.dll"/>
-  <UsingTask TaskName="StoreClientDetailsTask" AssemblyFile=".\bin\Debug\Snowcode.S3BuildPublisher.dll"/>
+  <Import Project=".\Snowcode.S3BuildPublisher.Tasks.Targets" />
+
+  <!-- Modity these values to match your own EC2 InstanceId and IPAddress values -->
+  <PropertyGroup>
+    <InstanceId>i-6de0a406</InstanceId>
+    <IpAddress>184.73.176.41</IpAddress>
+  </PropertyGroup>
 
   <ItemGroup>
     <SourceFiles Include="./PublishData.proj" />
+    <InstanceIds Include="$(InstanceId)" />
   </ItemGroup>
   
   <!-- Sample/Debug target for publishing to S3 -->
@@ -19,11 +25,39 @@
   </Target>
 
   <!-- Sample target to store AWS credentials -->
+  <!-- You should run this first time you run any of these targets to ensure your keys are stored -->
   <Target Name="StoreKeys">
     <StoreClientDetailsTask
       EncryptionContainerName ="MySecretContainer"
       AwsAccessKeyId="##YOUR-AMAZON-ID-HERE##"
       AwsSecretAccesskey="##YOUR-SECRET-ACCESS-KEY-HERE##" />
+  </Target>
+
+  <Target Name="StartEC2Instance">
+    <StartEC2InstancesTask 
+      InstanceIds="@(InstanceIds)"
+      EncryptionContainerName ="MySecretContainer" />
+    <!-- TODO: State will be pending, need to wait/monitor that it has actually started -->
+  </Target>
+
+  <Target Name="SetIpAddress">
+    <AssociateIpAddressTask
+      InstanceId="$(InstanceId)"
+      IpAddress="$(IpAddress)"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <Target Name="ReleaseIpAddress">
+    <DisassociateIpAddressTask
+      IpAddress="$(IpAddress)"
+      EncryptionContainerName ="MySecretContainer"/>
+  </Target>
+
+  <Target Name="StopEC2Instance">
+    <StopEC2InstancesTask 
+      InstanceIds="@(InstanceIds)"
+      EncryptionContainerName ="MySecretContainer"/>
+    <!-- TODO: State will be stopping, need to wait/monitor that it has actually stopped -->
   </Target>
   
 </Project>

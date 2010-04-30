@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <S3BuildPublisherLibrary>.\bin\Debug\Snowcode.S3BuildPublisher.dll</S3BuildPublisherLibrary>
+  </PropertyGroup>
+
+  <!-- Support Tasks -->
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="StoreClientDetailsTask" />
+
+  <!-- S3 Tasks -->
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="S3BuildPublisher" />
+  
+  <!-- EC2 Tasks -->
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="AssociateIpAddressTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DisassociateIpAddressTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="StartEC2InstancesTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="StopEC2InstancesTask" />
+</Project>

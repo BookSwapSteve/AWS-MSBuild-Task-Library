@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientDetailsStoreTests.cs" />
+    <Compile Include="EC2\EC2HelperTest.cs" />
     <Compile Include="EncryptionHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
