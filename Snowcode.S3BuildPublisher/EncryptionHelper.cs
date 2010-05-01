@@ -16,7 +16,7 @@ namespace Snowcode.S3BuildPublisher
         {
             byte[] dataToEncrypt = Encoding.ASCII.GetBytes(toEncrypt);
 
-            var parameters = new CspParameters {KeyContainerName = ContainerName(password)};
+            var parameters = new CspParameters { KeyContainerName = SaltedPassword(password) };
 
             // Create a new instance of the RSACryptoServiceProvider class 
             var cryptoServiceProvider = new RSACryptoServiceProvider(parameters);
@@ -28,7 +28,7 @@ namespace Snowcode.S3BuildPublisher
             return Convert.ToBase64String(encryptedData);
         }
 
-        private static string ContainerName(string password)
+        private static string SaltedPassword(string password)
         {
             // ADH: 2010.05.01 
             // since this is our own private server, and any "attacker" won't have access to the encrypt method
@@ -46,7 +46,7 @@ namespace Snowcode.S3BuildPublisher
         /// <returns></returns>
         public static string Decrypt(string password, string toDecrypt)
         {
-            var parameters = new CspParameters {KeyContainerName = ContainerName(password) };
+            var parameters = new CspParameters { KeyContainerName = SaltedPassword(password) };
             var cryptoServiceProvider = new RSACryptoServiceProvider(parameters);
 
             // Pass the data to ENCRYPT and boolean flag specifying no OAEP padding.
