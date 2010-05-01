@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using Snowcode.S3BuildPublisher.EC2;
 
 namespace Snowcode.S3BuildPublisher.Test.EC2
@@ -43,7 +44,53 @@ namespace Snowcode.S3BuildPublisher.Test.EC2
 
         [Test]
         [Ignore("Manual run test")]
-        public void AssociateIpAddressWithInstance_Should_Succeed ()
+        public void RunInstance_Should_RunInstance()
+        {
+            var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            EC2Helper ec2Helper = new EC2Helper(clientDetails);
+
+            // Modify these to match your own AWS settings.
+            const string ami = "ami-bfab42d6";
+            const string keyPair = "BookSwapPair1";
+            const string securityGroup = "Basic";
+            const string userData = "";
+
+            List<string> instances = ec2Helper.RunInstance(ami, 1, keyPair, userData, new string[] { securityGroup });
+
+            Assert.IsNotEmpty(instances);
+        }
+
+        [Test]
+        [Ignore("Manual run test")]
+        public void Reboot_Should_RebootInstance()
+        {
+            var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            EC2Helper ec2Helper = new EC2Helper(clientDetails);
+
+            // TODO: this instanceId will change based on the Run Instance test.
+            ec2Helper.RebootInstance(new string[] { "i-4501472e" });
+        }
+
+        [Test]
+        [Ignore("Manual run test")]
+        public void TerminateInstnace_Should_TerminateInstance()
+        {
+            var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            EC2Helper ec2Helper = new EC2Helper(clientDetails);
+
+            // TODO: this instanceId will change based on the Run Instance test.
+            ec2Helper.TerminateInstance(new string[] { "i-6503450e" });
+        }
+
+        [Test]
+        [Ignore("Manual run test")]
+        public void AssociateIpAddressWithInstance_Should_Succeed()
         {
             var store = new ClientDetailsStore();
             AwsClientDetails clientDetails = store.Load(Container);

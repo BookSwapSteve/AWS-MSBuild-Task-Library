@@ -51,8 +51,11 @@
     <Compile Include="EC2\AssociateIpAddressTask.cs" />
     <Compile Include="EC2\DisassociateIpAddressTask.cs" />
     <Compile Include="EC2\EC2Helper.cs" />
+    <Compile Include="EC2\RebootEC2InstancesTask.cs" />
+    <Compile Include="EC2\RunEC2InstancesTask.cs" />
     <Compile Include="EC2\StartEC2InstancesTask.cs" />
     <Compile Include="EC2\StopEC2InstancesTask.cs" />
+    <Compile Include="EC2\TerminateEC2InstancesTask.cs" />
     <Compile Include="EncryptionHelper.cs" />
     <Compile Include="S3BuildPublisher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -64,7 +67,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ReadMe.txt" />
-    <None Include="Snowcode.S3BuildPublisher.Tasks.Targets" />
+    <None Include="Snowcode.S3BuildPublisher.Tasks.Targets">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

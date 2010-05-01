@@ -16,4 +16,8 @@
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DisassociateIpAddressTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="StartEC2InstancesTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="StopEC2InstancesTask" />
+
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="RunEC2InstancesTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="TerminateEC2InstancesTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="RebootEC2InstancesTask" />
 </Project>

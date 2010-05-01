@@ -6,11 +6,20 @@
   <PropertyGroup>
     <InstanceId>i-6de0a406</InstanceId>
     <IpAddress>184.73.176.41</IpAddress>
+    <!-- amazon/Windows-Server2003R2-i386-Base-v109 -->
+    <ImageId>ami-f11ff098</ImageId>
+    <KeyPairName>BookSwapPair1</KeyPairName>
   </PropertyGroup>
 
   <ItemGroup>
     <SourceFiles Include="./PublishData.proj" />
     <InstanceIds Include="$(InstanceId)" />
+  </ItemGroup>
+
+  <!-- Replace these with instances that are running -->
+  <ItemGroup>
+    <TerminateInstanceIds Include="i-c7185eac" />
+    <TerminateInstanceIds Include="i-411c5a2a" />
   </ItemGroup>
   
   <!-- Sample/Debug target for publishing to S3 -->
@@ -58,6 +67,35 @@
       InstanceIds="@(InstanceIds)"
       EncryptionContainerName ="MySecretContainer"/>
     <!-- TODO: State will be stopping, need to wait/monitor that it has actually stopped -->
+  </Target>
+
+  <!-- Run an EC2 instance from the AMI ImageId -->
+  <Target Name="RunEC2Instance">
+    <RunEC2InstancesTask
+      ImageId="$(ImageId)"
+      NumberOfInstances="1"
+      KeyName="$(KeyPairName)"
+      SecurityGroups="default"
+      EncryptionContainerName ="MySecretContainer">
+        <Output TaskParameter="InstanceIds" ItemName="RunningInstanceIds" />
+    </RunEC2InstancesTask>
+    
+    <!-- This is very slow, need to wait for the instances to be up and running -->
+    <Message Importance="High" Text="Please wait for instances to run up."  />
+    <Message Text="Launched Instances: @(RunningInstanceIds)" />
+  </Target>
+
+  <Target Name="RebootEC2Instance">
+    <RebootEC2InstancesTask
+      InstanceIds ="@(TerminateInstanceIds)"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <!-- Terminates (kills) the EC2 Instance -->
+  <Target Name="TerminateEC2Instance">
+    <TerminateEC2InstancesTask 
+      InstanceIds ="@(TerminateInstanceIds)"
+      EncryptionContainerName ="MySecretContainer" />
   </Target>
   
 </Project>

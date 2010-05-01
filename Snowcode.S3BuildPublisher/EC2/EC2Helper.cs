@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Amazon.EC2;
 using Amazon.EC2.Model;
 
@@ -29,6 +30,8 @@ namespace Snowcode.S3BuildPublisher.EC2
             get;
             set;
         }
+
+        #region EBS based EC2 instance handling
 
         /// <summary>
         /// Start's instances - these should be EBS block storage instances.
@@ -67,6 +70,45 @@ namespace Snowcode.S3BuildPublisher.EC2
             }
         }
 
+        #endregion
+
+        #region AMI based instance handling
+
+        public List<string> RunInstance(string imageId, int numberOfInstances, string keyName, string userData, string[] securityGroups)
+        {
+            var request = new RunInstancesRequest
+                              {
+                                  ImageId = imageId,
+                                  MinCount = numberOfInstances,
+                                  MaxCount = numberOfInstances,
+                                  KeyName = keyName,
+                                  UserData = userData,
+                                  SecurityGroup = new List<string>(securityGroups)
+                              };
+
+            RunInstancesResponse response = Client.RunInstances(request);
+
+            return response.RunInstancesResult.Reservation.RunningInstance.Select(runningInstance => runningInstance.InstanceId).ToList();
+        }
+
+        public void TerminateInstance(IEnumerable<string> instanceIds)
+        {
+            var request = new TerminateInstancesRequest { InstanceId = new List<string>(instanceIds) };
+
+            Client.TerminateInstances(request);
+        }
+
+        public void RebootInstance(IEnumerable<string> instanceIds)
+        {
+            var request = new RebootInstancesRequest { InstanceId = new List<string>(instanceIds) };
+
+            Client.RebootInstances(request);
+        }
+
+        #endregion
+
+        #region IP Address handling
+
         /// <summary>
         /// Associate a public IP Address with an EC2 instance
         /// </summary>
@@ -88,6 +130,6 @@ namespace Snowcode.S3BuildPublisher.EC2
             Client.DisassociateAddress(request);
         }
 
-
+        #endregion
     }
 }
