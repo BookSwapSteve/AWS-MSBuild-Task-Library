@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <S3BuildPublisherLibrary>.\bin\Debug\Snowcode.S3BuildPublisher.dll</S3BuildPublisherLibrary>
+    <S3BuildPublisherLibrary>.\Snowcode.S3BuildPublisher.dll</S3BuildPublisherLibrary>
   </PropertyGroup>
 
   <!-- Support Tasks -->

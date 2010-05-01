@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Snowcode.S3BuildPublisher.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AWSSDK, Version=1.0.6.1, Culture=neutral, PublicKeyToken=cd2d24cd2bace800, processorArchitecture=MSIL">

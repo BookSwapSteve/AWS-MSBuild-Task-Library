@@ -10,7 +10,7 @@ Debugging
 ---------
 In Project Properties->Debug
 Start External Program -> c:\windows\Microsoft.NET\Framework\v3.5\MSBuild.exe
-Command Line Argument -> Path_to\PublishData.proj
+Command Line Argument -> Path_to\bin\Debug\PublishData.proj
 
 More info on MSBuild tasks
 --------------------------
