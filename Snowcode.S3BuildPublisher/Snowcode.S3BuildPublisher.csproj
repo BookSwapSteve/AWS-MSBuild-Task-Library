@@ -49,6 +49,13 @@
     <Compile Include="AwsTaskBase.cs" />
     <Compile Include="ClientDetailsStore.cs" />
     <Compile Include="EC2\AssociateIpAddressTask.cs" />
+    <Compile Include="EC2\AttachVolumeTask.cs" />
+    <Compile Include="EC2\CreateSnapShotTask.cs" />
+    <Compile Include="EC2\CreateVolumeFromSnapshotTask.cs" />
+    <Compile Include="EC2\CreateVolumeTask.cs" />
+    <Compile Include="EC2\DeleteSnapShotTask.cs" />
+    <Compile Include="EC2\DeleteVolumeTask.cs" />
+    <Compile Include="EC2\DetachVolumeTask.cs" />
     <Compile Include="EC2\DisassociateIpAddressTask.cs" />
     <Compile Include="EC2\EC2Helper.cs" />
     <Compile Include="EC2\RebootEC2InstancesTask.cs" />
@@ -63,12 +70,15 @@
     <Compile Include="StoreClientDetailsTask.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PublishData.proj" />
+    <None Include="PublishData.proj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ReadMe.txt" />
     <None Include="Snowcode.S3BuildPublisher.Tasks.Targets">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

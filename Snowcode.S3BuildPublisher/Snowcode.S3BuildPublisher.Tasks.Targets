@@ -20,4 +20,17 @@
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="RunEC2InstancesTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="TerminateEC2InstancesTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="RebootEC2InstancesTask" />
+
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateVolumeTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateVolumeFromSnapshotTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteVolumeTask" />
+  
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="AttachVolumeTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DetachVolumeTask" />
+  
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateSnapShotTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSnapShotTask" />
+  
+  
+  
 </Project>

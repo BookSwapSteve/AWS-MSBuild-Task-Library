@@ -21,7 +21,7 @@
     <TerminateInstanceIds Include="i-c7185eac" />
     <TerminateInstanceIds Include="i-411c5a2a" />
   </ItemGroup>
-  
+
   <!-- Sample/Debug target for publishing to S3 -->
   <Target Name="Debug">
 
@@ -30,7 +30,7 @@
       SourceFiles="@(SourceFiles)"
       DestinationBucket="s3publisher-testbucket-1"
       PublicRead="true" />
-      
+
   </Target>
 
   <!-- Sample target to store AWS credentials -->
@@ -43,7 +43,7 @@
   </Target>
 
   <Target Name="StartEC2Instance">
-    <StartEC2InstancesTask 
+    <StartEC2InstancesTask
       InstanceIds="@(InstanceIds)"
       EncryptionContainerName ="MySecretContainer" />
     <!-- TODO: State will be pending, need to wait/monitor that it has actually started -->
@@ -63,7 +63,7 @@
   </Target>
 
   <Target Name="StopEC2Instance">
-    <StopEC2InstancesTask 
+    <StopEC2InstancesTask
       InstanceIds="@(InstanceIds)"
       EncryptionContainerName ="MySecretContainer"/>
     <!-- TODO: State will be stopping, need to wait/monitor that it has actually stopped -->
@@ -77,9 +77,9 @@
       KeyName="$(KeyPairName)"
       SecurityGroups="default"
       EncryptionContainerName ="MySecretContainer">
-        <Output TaskParameter="InstanceIds" ItemName="RunningInstanceIds" />
+      <Output TaskParameter="InstanceIds" ItemName="RunningInstanceIds" />
     </RunEC2InstancesTask>
-    
+
     <!-- This is very slow, need to wait for the instances to be up and running -->
     <Message Importance="High" Text="Please wait for instances to run up."  />
     <Message Text="Launched Instances: @(RunningInstanceIds)" />
@@ -93,9 +93,71 @@
 
   <!-- Terminates (kills) the EC2 Instance -->
   <Target Name="TerminateEC2Instance">
-    <TerminateEC2InstancesTask 
+    <TerminateEC2InstancesTask
       InstanceIds ="@(TerminateInstanceIds)"
       EncryptionContainerName ="MySecretContainer" />
   </Target>
-  
+
+  <Target Name="CreateVolume">
+    <CreateVolumeTask
+      AvailabilityZone="us-east-1b"
+      Size="2"
+      EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="VolumeId" PropertyName="VolumeId" />
+    </CreateVolumeTask>
+
+    <Message Text="Created volume: $(VolumeId)" />
+  </Target>
+
+  <Target Name="AttachVolume">
+    <AttachVolumeTask
+      VolumeId="vol-87c877ee"
+      InstanceId="i-6de0a406"
+      Device="xvdg"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <Target Name="DetachVolume">
+    <DetachVolumeTask
+      VolumeId="vol-87c877ee"
+      InstanceId="i-6de0a406"
+      Device="xvdg"
+      Force="true"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <Target Name="SnapShot">
+    <CreateSnapShotTask
+      VolumeId="vol-87c877ee"
+      Description="Sample SnapShot"
+      EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="SnapShotId" PropertyName="SnapShotId" />
+    </CreateSnapShotTask>
+
+    <Message Text="Created SnapShot: $(SnapShotId)" />
+  </Target>
+
+  <Target Name="CreateVolumeFromSnapShot">
+    <CreateVolumeFromSnapshotTask
+      SnapShotId="snap-dee846b6"
+      AvailabilityZone="us-east-1b"
+      EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="VolumeId" PropertyName="VolumeId" />
+    </CreateVolumeFromSnapshotTask>
+
+    <Message Text="Created volume: $(VolumeId)" />
+  </Target>
+
+  <Target Name="DeleteSnapShot">
+    <DeleteSnapShotTask
+      SnapShotId="snap-dee846b6"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <Target Name="DeleteVolume">
+    <DeleteVolumeTask
+      VolumeId="vol-3fc47b56"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
 </Project>

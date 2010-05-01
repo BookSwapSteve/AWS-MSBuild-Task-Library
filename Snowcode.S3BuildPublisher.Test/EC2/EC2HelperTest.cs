@@ -111,5 +111,117 @@ namespace Snowcode.S3BuildPublisher.Test.EC2
 
             ec2Helper.DisassociateIpAddress(DefaultIpAddress);
         }
+
+        [Test]
+        [Ignore("Manual run test")]
+        public void CreateNewVolume_Should_CreateNewVolume()
+        {
+            var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            EC2Helper ec2Helper = new EC2Helper(clientDetails);
+
+            // Create a 2Gb volumne.
+            string volumeId = ec2Helper.CreateNewVolume("us-east-1b", "2"); // "us-east-1b"
+
+            Assert.IsNotEmpty(volumeId, "Expected VolumeId");
+        }
+
+        [Test]
+        [Ignore("Manual run test")]
+        public void CreateSnapShotFromVolume_Should_CreateSnapShot()
+        {
+            var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            EC2Helper ec2Helper = new EC2Helper(clientDetails);
+
+            const string volumeId = "vol-d1e15eb8";
+            const string description = "Test SnapShot";
+
+            // Create a 2Gb volumne.
+            string snapShotId = ec2Helper.CreateSnapShot(volumeId, description);
+
+            Assert.IsNotEmpty(snapShotId, "Expected SnapShot Id");
+        }
+
+        [Test]
+        [Ignore("Manual run test")]
+        public void DeleteVolume_Should_DeleteVolume()
+        {
+            var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            EC2Helper ec2Helper = new EC2Helper(clientDetails);
+
+            const string volumeId = "vol-d1e15eb8";
+
+            // Delete the volume
+            ec2Helper.DeleteVolume(volumeId);
+        }
+
+        [Test]
+        [Ignore("Manual run test")]
+        public void CreateVolumeFromSnapShot_Should_CreateNewVolume()
+        {
+            var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            EC2Helper ec2Helper = new EC2Helper(clientDetails);
+
+            const string availabilityZone = "us-east-1b";
+            const string snapShotId = "snap-422c832a";
+
+            // Create a 2Gb volumne.
+            string volumeId = ec2Helper.CreateVolumeFromSnapshot(availabilityZone, snapShotId);
+
+            Assert.IsNotEmpty(volumeId, "Expected VolumeId");
+        }
+
+        [Test]
+        [Ignore("Manual run test")]
+        public void DeleteSnapShot_Should_DeleteSnapShot()
+        {
+            var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            EC2Helper ec2Helper = new EC2Helper(clientDetails);
+
+            const string snapShotId = "snap-422c832a";
+
+            ec2Helper.DeleteSnapShot(snapShotId);
+        }
+
+        [Test]
+        [Ignore("Manual run test")]
+        public void AttachVolumeToInstance_Should_AttachVolume()
+        {
+            var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            EC2Helper ec2Helper = new EC2Helper(clientDetails);
+
+            const string device = "xvdf";
+            const string volumeId = "vol-6bd56a02";
+            const string instanceId = "i-6de0a406";
+
+            ec2Helper.AttachVolume(device, instanceId, volumeId);
+        }
+
+        [Test]
+        [Ignore("Manual run test")]
+        public void DetachVolume_Should_DetachVolume()
+        {
+            var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            EC2Helper ec2Helper = new EC2Helper(clientDetails);
+
+            const string device = "xvdf";
+            const string volumeId = "vol-6bd56a02";
+            const string instanceId = "i-6de0a406";
+
+            ec2Helper.DetachVolume(device, instanceId, volumeId, true);
+        }
     }
 }
