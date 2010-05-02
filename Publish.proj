@@ -12,22 +12,30 @@
 
   <UsingTask TaskName="S3BuildPublisher" AssemblyFile=".\Snowcode.S3BuildPublisher\bin\Release\Snowcode.S3BuildPublisher.dll"/>
   <UsingTask TaskName="StoreClientDetailsTask" AssemblyFile=".\Snowcode.S3BuildPublisher\bin\Release\Snowcode.S3BuildPublisher.dll"/>
+  <Import Project="..\..\3rdparty\msbuild\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
 
   <PropertyGroup>
     <Bucket>MSBuild-S3-Publisher</Bucket>
     <Container>MySecretContainer</Container>
+    <ReleasesFolder>.\Build\Releases\</ReleasesFolder>
+    <ZipFileName>$(ReleasesFolder)MSBuild.AWS.Tasks.Release.zip</ZipFileName>
   </PropertyGroup>
 
   <!-- Include all the output release files -->
   <ItemGroup>
-    <SourceFiles Include=".\**\bin\Release\*.dll" />
+    <SourceFiles Include=".\Snowcode.S3BuildPublisher\bin\Release\*.*" />
   </ItemGroup>
   
   <!-- Publish the files generated from the build to S3 -->
   <Target Name="Publish">
+    <RemoveDir Directories="$(ReleasesFolder)" />
+    <MakeDir Directories="$(ReleasesFolder)" />
+
+    <Zip Files="@(SourceFiles)" ZipFileName="$(ZipFileName)" WorkingDirectory=".\Snowcode.S3BuildPublisher\bin\Release\"/>
+
     <S3BuildPublisher
       EncryptionContainerName ="$(Container)"
-      SourceFiles="@(SourceFiles)"
+      SourceFiles="$(ZipFileName)"
       DestinationBucket="$(Bucket)"
       PublicRead="true" />
   </Target>
