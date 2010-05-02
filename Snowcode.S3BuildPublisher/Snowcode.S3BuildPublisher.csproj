@@ -75,6 +75,11 @@
     <Compile Include="SNS\SNSHelper.cs" />
     <Compile Include="SNS\SubscribeToSNSTopicTask.cs" />
     <Compile Include="SNS\UnsubscribeFromSNSTopicTask.cs" />
+    <Compile Include="SQS\CreateSQSQueueTask.cs" />
+    <Compile Include="SQS\DeleteSQSMessageTask.cs" />
+    <Compile Include="SQS\DeleteSQSQueueTask.cs" />
+    <Compile Include="SQS\ReceiveSQSMessageTask.cs" />
+    <Compile Include="SQS\SendSQSMessageTask.cs" />
     <Compile Include="SQS\SQSHelper.cs" />
     <Compile Include="StoreClientDetailsTask.cs" />
   </ItemGroup>

@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AWSSDK, Version=1.0.8.0, Culture=neutral, PublicKeyToken=cd2d24cd2bace800, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Binaries\AmazonS3\AWSSDK.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\Binaries\NUnit\nunit.framework.dll</HintPath>
     </Reference>

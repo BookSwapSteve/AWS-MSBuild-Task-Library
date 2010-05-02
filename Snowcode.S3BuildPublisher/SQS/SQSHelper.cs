@@ -1,12 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {
-    public class SQSHelper
+    /// <summary>
+    /// Helper class for Amazon Simple Queue Service.
+    /// </summary>
+    public class SQSHelper : IDisposable
     {
+        private bool disposed;
+
         #region Constructors
 
         public SQSHelper(string awsAccessKeyId, string awsSecretAccessKey)
@@ -19,6 +26,11 @@ namespace Snowcode.S3BuildPublisher.SQS
             Client = new AmazonSQSClient(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
         }
 
+        ~SQSHelper()
+        {
+            Dispose(false);
+        }
+
         #endregion
 
         protected AmazonSQSClient Client
@@ -27,6 +39,11 @@ namespace Snowcode.S3BuildPublisher.SQS
             set;
         }
 
+        /// <summary>
+        /// Creates a SQS queue
+        /// </summary>
+        /// <param name="queueName"></param>
+        /// <returns></returns>
         public string CreateQueue(string queueName)
         {
             var request = new CreateQueueRequest { QueueName = queueName };
@@ -36,11 +53,18 @@ namespace Snowcode.S3BuildPublisher.SQS
             return response.CreateQueueResult.QueueUrl;
         }
 
-        public void SetQueuePermissions(string queueUrl, string label, IEnumerable<string> awsAccountIds)
+        /// <summary>
+        /// Sets the permissions on the queue
+        /// </summary>
+        /// <param name="queueUrl"></param>
+        /// <param name="label"></param>
+        /// <param name="actionNames"></param>
+        /// <param name="awsAccountIds"></param>
+        public void SetQueuePermissions(string queueUrl, string label, IEnumerable<string> actionNames, IEnumerable<string> awsAccountIds)
         {
             var request = new AddPermissionRequest
                               {
-                                  ActionName = new List<string> { "*" },
+                                  ActionName = new List<string>(actionNames),
                                   QueueUrl = queueUrl,
                                   AWSAccountId = new List<string>(awsAccountIds),
                                   Label = label
@@ -49,6 +73,10 @@ namespace Snowcode.S3BuildPublisher.SQS
             Client.AddPermission(request);
         }
 
+        /// <summary>
+        /// Deletes the SQS Queue
+        /// </summary>
+        /// <param name="queueUrl"></param>
         public void DeleteQueue(string queueUrl)
         {
             var request = new DeleteQueueRequest { QueueUrl = queueUrl };
@@ -56,6 +84,10 @@ namespace Snowcode.S3BuildPublisher.SQS
             Client.DeleteQueue(request);
         }
 
+        /// <summary>
+        /// Lists the Queues
+        /// </summary>
+        /// <returns></returns>
         public string[] ListQueues()
         {
             var request = new ListQueuesRequest();
@@ -65,6 +97,12 @@ namespace Snowcode.S3BuildPublisher.SQS
             return response.ListQueuesResult.QueueUrl.ToArray();
         }
 
+        /// <summary>
+        /// Sends a message to the SQS Queue
+        /// </summary>
+        /// <param name="messageBody"></param>
+        /// <param name="queueUrl"></param>
+        /// <returns></returns>
         public string SendMessage(string messageBody, string queueUrl)
         {
             var request = new SendMessageRequest { MessageBody = messageBody, QueueUrl = queueUrl };
@@ -74,34 +112,64 @@ namespace Snowcode.S3BuildPublisher.SQS
             return response.SendMessageResult.MessageId;
         }
 
-        public string[] ReceiveMessage(decimal maxNumberOfMessages, string queueUrl, bool deleteOnRead)
+        /// <summary>
+        /// Receives a message from the SQS Queue
+        /// </summary>
+        /// <param name="queueUrl"></param>
+        /// <returns></returns>
+        public Message ReceiveMessage(string queueUrl)
         {
-            var request = new ReceiveMessageRequest { MaxNumberOfMessages = maxNumberOfMessages, QueueUrl = queueUrl };
+            var request = new ReceiveMessageRequest { MaxNumberOfMessages = 1, QueueUrl = queueUrl };
 
             ReceiveMessageResponse response = Client.ReceiveMessage(request);
 
-            var messageBodies = new List<string>();
             if (response.IsSetReceiveMessageResult())
             {
-                foreach (Message message in response.ReceiveMessageResult.Message)
-                {
-                    messageBodies.Add(message.Body);
-
-                    // Delete the message onces it's been read.
-                    if (deleteOnRead)
-                    {
-                        DeleteMessage(queueUrl, message.ReceiptHandle);
-                    }
-                }
+                return response.ReceiveMessageResult.Message.FirstOrDefault();
             }
-            return messageBodies.ToArray();
+            return null;
         }
 
-        private void DeleteMessage(string queueUrl, string receiptHandle)
+        /// <summary>
+        /// Deletes a message from the queue
+        /// </summary>
+        /// <param name="queueUrl"></param>
+        /// <param name="receiptHandle"></param>
+        public void DeleteMessage(string queueUrl, string receiptHandle)
         {
             var request = new DeleteMessageRequest { QueueUrl = queueUrl, ReceiptHandle = receiptHandle };
 
             Client.DeleteMessage(request);
         }
+
+        #region Implementation of IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        virtual protected void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                if (!disposing)
+                {
+                    try
+                    {
+                        if (Client != null)
+                        {
+                            Client.Dispose();
+                        }
+                    }
+                    finally
+                    {
+                        disposed = true;
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 }

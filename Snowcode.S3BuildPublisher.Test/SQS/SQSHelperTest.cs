@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using NUnit.Framework;
 using Snowcode.S3BuildPublisher.SQS;
 
@@ -43,6 +44,21 @@ namespace Snowcode.S3BuildPublisher.Test.SQS
 
         [Test]
         [Ignore("Manual run test")]
+        public void DeleteQueue_Should_DeleteQueue()
+        {
+            var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            SQSHelper helper = new SQSHelper(clientDetails);
+
+            // Qreate a queue to delete.
+            string queueUrl = helper.CreateQueue("TestQ");
+
+            helper.DeleteQueue(queueUrl);
+        }
+
+        [Test]
+        [Ignore("Manual run test")]
         public void SendMessage_Should_ReturnMessageId()
         {
             var store = new ClientDetailsStore();
@@ -61,7 +77,7 @@ namespace Snowcode.S3BuildPublisher.Test.SQS
 
         [Test]
         [Ignore("Manual run test")]
-        public void ReceiveMessage_Should_ReceiveMessage()
+        public void ReceiveMessage_Should_ReceiveMessageAndNotRemoveIt()
         {
             var store = new ClientDetailsStore();
             AwsClientDetails clientDetails = store.Load(Container);
@@ -72,15 +88,31 @@ namespace Snowcode.S3BuildPublisher.Test.SQS
 
             // Add a message to the queue to ensure that their is one and wait for 2 seconds to allow
             // the message to propogate.
-            helper.SendMessage("Sample test message", queueUrl);
-            Thread.Sleep(2000);
+            // Add the time on to ensure the correct message is received.
+            string expectedMessage = "Sample test message " + DateTime.Now.ToLongTimeString(); 
+            helper.SendMessage(expectedMessage, queueUrl);
 
-            string[] messageBodies = helper.ReceiveMessage(10M, queueUrl, true);
+            // Messages can be very slow to appear on the queue.
+            Thread.Sleep(60000);
 
-            Assert.IsNotEmpty(messageBodies, "No messages");
+            // Get the sent message.
+            Amazon.SQS.Model.Message message = helper.ReceiveMessage(queueUrl);
+            Assert.IsNotNull(message, "No messages");
+            
+            try
+            {
+                Assert.AreEqual(expectedMessage, message.Body, "Expected message body first time");
 
-            string[] messageBodiesReRead = helper.ReceiveMessage(10M, queueUrl, true);
-            Assert.IsEmpty(messageBodiesReRead, "Should not have messages on second read");
+                // Ensure that we can get the message a second time.
+                Amazon.SQS.Model.Message message2 = helper.ReceiveMessage(queueUrl);
+                Assert.IsNotNull(message2, "Message should not have been removed.");
+                Assert.AreEqual(expectedMessage, message2.Body, "Expected message body second time");
+            } 
+            finally
+            {
+                // Delete the message.
+                helper.DeleteMessage(queueUrl, message.ReceiptHandle);    
+            }
         }
     }
 }

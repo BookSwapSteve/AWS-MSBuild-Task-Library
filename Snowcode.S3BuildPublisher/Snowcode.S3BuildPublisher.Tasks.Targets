@@ -38,5 +38,12 @@
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="SubscribeToSNSTopicTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="UnsubscribeFromSNSTopicTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="AddSNSPermissionsTask" />
+  
+  <!-- SQS -->
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateSQSQueueTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSQSQueueTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="SendSQSMessageTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="ReceiveSQSMessageTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSQSMessageTask" />
 
 </Project>
