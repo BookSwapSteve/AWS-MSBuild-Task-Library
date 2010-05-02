@@ -30,9 +30,11 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         private void DeleteSnapShot(AwsClientDetails clientDetails)
         {
-            var helper = new EC2Helper(clientDetails);
-            helper.DeleteSnapShot(SnapShotId);
-            Log.LogMessage(MessageImportance.Normal, "Deleted SnapShot {0}", SnapShotId);
+            using (var helper = new EC2Helper(clientDetails))
+            {
+                helper.DeleteSnapShot(SnapShotId);
+                Log.LogMessage(MessageImportance.Normal, "Deleted SnapShot {0}", SnapShotId);
+            }
         }
     }
 }

@@ -36,9 +36,11 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         private void AssociateIpAddress(AwsClientDetails clientDetails)
         {
-            var helper = new EC2Helper(clientDetails);
-            helper.AssociateIpAddress(InstanceId, IpAddress);
-            Log.LogMessage(MessageImportance.Normal, "Associated IP Address {0} with InstanceId {1}", IpAddress, InstanceId);
+            using (var helper = new EC2Helper(clientDetails))
+            {
+                helper.AssociateIpAddress(InstanceId, IpAddress);
+                Log.LogMessage(MessageImportance.Normal, "Associated IP Address {0} with InstanceId {1}", IpAddress, InstanceId);
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.Build.Framework;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SNS
 {
@@ -30,9 +30,11 @@ namespace Snowcode.S3BuildPublisher.SNS
 
         private void DeleteTopic(AwsClientDetails clientDetails)
         {
-            var helper = new SNSHelper(clientDetails);
-            helper.DeleteTopic(TopicArn);
-            Log.LogMessage(MessageImportance.Normal, "Deleted SNS Topic {0}", TopicArn);
+            using (var helper = new SNSHelper(clientDetails))
+            {
+                helper.DeleteTopic(TopicArn);
+                Log.LogMessage(MessageImportance.Normal, "Deleted SNS Topic {0}", TopicArn);
+            }
         }
     }
 }

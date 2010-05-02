@@ -30,9 +30,11 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         private void StopInstances(AwsClientDetails clientDetails)
         {
-            var helper = new EC2Helper(clientDetails);
-            helper.StopInstances(InstanceIds);
-            Log.LogMessage(MessageImportance.Normal, "Stopped Instances {0}", string.Join(";", InstanceIds));
+            using (var helper = new EC2Helper(clientDetails))
+            {
+                helper.StopInstances(InstanceIds);
+                Log.LogMessage(MessageImportance.Normal, "Stopped Instances {0}", string.Join(";", InstanceIds));
+            }
         }
     }
 }

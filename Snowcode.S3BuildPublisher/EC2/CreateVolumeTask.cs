@@ -42,9 +42,11 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         private void CreateVolume(AwsClientDetails clientDetails)
         {
-            var helper = new EC2Helper(clientDetails);
-            VolumeId =  helper.CreateNewVolume(AvailabilityZone, Size);
-            Log.LogMessage(MessageImportance.Normal, "Created volume of size {0}MiB with VolumeId {1}", Size, VolumeId);
+            using (var helper = new EC2Helper(clientDetails))
+            {
+                VolumeId = helper.CreateNewVolume(AvailabilityZone, Size);
+                Log.LogMessage(MessageImportance.Normal, "Created volume of size {0}MiB with VolumeId {1}", Size, VolumeId);
+            }
         }
     }
 }

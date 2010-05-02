@@ -30,9 +30,11 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         private void DeleteVolume(AwsClientDetails clientDetails)
         {
-            var helper = new EC2Helper(clientDetails);
-            helper.DeleteVolume(VolumeId);
-            Log.LogMessage(MessageImportance.Normal, "Deleted Volume {0}", VolumeId);
+            using (var helper = new EC2Helper(clientDetails))
+            {
+                helper.DeleteVolume(VolumeId);
+                Log.LogMessage(MessageImportance.Normal, "Deleted Volume {0}", VolumeId);
+            }
         }
     }
 }

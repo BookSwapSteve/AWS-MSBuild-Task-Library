@@ -147,6 +147,7 @@ namespace Snowcode.S3BuildPublisher.SQS
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         virtual protected void Dispose(bool disposing)

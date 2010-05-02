@@ -30,9 +30,11 @@ namespace Snowcode.S3BuildPublisher.SNS
 
         private void Unsubscribe(AwsClientDetails clientDetails)
         {
-            var helper = new SNSHelper(clientDetails);
-            helper.Unsubscribe(SubscriptionArn);
-            Log.LogMessage(MessageImportance.Normal, "Unsubscribed from SubscriptionArn {0}", SubscriptionArn);
+            using (var helper = new SNSHelper(clientDetails))
+            {
+                helper.Unsubscribe(SubscriptionArn);
+                Log.LogMessage(MessageImportance.Normal, "Unsubscribed from SubscriptionArn {0}", SubscriptionArn);
+            }
         }
     }
 }

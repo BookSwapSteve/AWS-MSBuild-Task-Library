@@ -48,9 +48,11 @@ namespace Snowcode.S3BuildPublisher.SNS
 
         private void AddPermissions(AwsClientDetails clientDetails)
         {
-            var helper = new SNSHelper(clientDetails);
-            helper.AddPermission(ActionNames, AwsAccountIds, Label, TopicArn);
-            Log.LogMessage(MessageImportance.Normal, "Set permissiosn for AWS Accounts {0} to Topic Arn {1}", string.Join(";", AwsAccountIds), TopicArn);
+            using (var helper = new SNSHelper(clientDetails))
+            {
+                helper.AddPermission(ActionNames, AwsAccountIds, Label, TopicArn);
+                Log.LogMessage(MessageImportance.Normal, "Set permissiosn for AWS Accounts {0} to Topic Arn {1}", string.Join(";", AwsAccountIds), TopicArn);
+            }
         }
     }
 }

@@ -47,9 +47,11 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         private void DetachVolume(AwsClientDetails clientDetails)
         {
-            var helper = new EC2Helper(clientDetails);
-            helper.DetachVolume(Device, InstanceId, VolumeId, Force);
-            Log.LogMessage(MessageImportance.Normal, "Detached volume");
+            using (var helper = new EC2Helper(clientDetails))
+            {
+                helper.DetachVolume(Device, InstanceId, VolumeId, Force);
+                Log.LogMessage(MessageImportance.Normal, "Detached volume");
+            }
         }
     }
 }

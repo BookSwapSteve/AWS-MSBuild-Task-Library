@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
@@ -8,8 +9,10 @@ namespace Snowcode.S3BuildPublisher.SNS
     /// <summary>
     /// Helper class for Amazon Simple Notification Service.
     /// </summary>
-    public class SNSHelper
+    public class SNSHelper : IDisposable
     {
+        private bool disposed;
+
         #region Constructors
 
         public SNSHelper(string awsAccessKeyId, string awsSecretAccessKey)
@@ -20,6 +23,11 @@ namespace Snowcode.S3BuildPublisher.SNS
         public SNSHelper(AwsClientDetails clientDetails)
         {
             Client = new AmazonSimpleNotificationServiceClient(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
+        }
+
+        ~SNSHelper()
+        {
+            Dispose(false);
         }
 
         #endregion
@@ -143,5 +151,36 @@ namespace Snowcode.S3BuildPublisher.SNS
 
             Client.Unsubscribe(request);
         }
+
+        #region Implementation of IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        virtual protected void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                if (!disposing)
+                {
+                    try
+                    {
+                        if (Client != null)
+                        {
+                            Client.Dispose();
+                        }
+                    }
+                    finally
+                    {
+                        disposed = true;
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 }

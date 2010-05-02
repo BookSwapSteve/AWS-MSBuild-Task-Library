@@ -10,8 +10,10 @@ namespace Snowcode.S3BuildPublisher.EC2
     /// <summary>
     /// Helper class to control AWS EC2 instances.
     /// </summary>
-    public class EC2Helper
+    public class EC2Helper : IDisposable
     {
+        private bool disposed;
+
         #region Constructors
 
         public EC2Helper(string awsAccessKeyId, string awsSecretAccessKey)
@@ -22,6 +24,11 @@ namespace Snowcode.S3BuildPublisher.EC2
         public EC2Helper(AwsClientDetails clientDetails)
         {
             Client = new AmazonEC2Client(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
+        }
+
+        ~EC2Helper()
+        {
+            Dispose(false);
         }
 
         #endregion
@@ -252,6 +259,37 @@ namespace Snowcode.S3BuildPublisher.EC2
                                 };
 
             Client.DetachVolume(request);
+        }
+
+        #endregion
+
+        #region Implementation of IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        virtual protected void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                if (!disposing)
+                {
+                    try
+                    {
+                        if (Client != null)
+                        {
+                            Client.Dispose();
+                        }
+                    }
+                    finally
+                    {
+                        disposed = true;
+                    }
+                }
+            }
         }
 
         #endregion

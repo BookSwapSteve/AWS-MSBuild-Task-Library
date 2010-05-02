@@ -42,9 +42,11 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         private void AttachVolume(AwsClientDetails clientDetails)
         {
-            var helper = new EC2Helper(clientDetails);
-            helper.AttachVolume(Device, InstanceId, VolumeId);
-            Log.LogMessage(MessageImportance.Normal, "Attached volume");
+            using (var helper = new EC2Helper(clientDetails))
+            {
+                helper.AttachVolume(Device, InstanceId, VolumeId);
+                Log.LogMessage(MessageImportance.Normal, "Attached volume");
+            }
         }
     }
 }

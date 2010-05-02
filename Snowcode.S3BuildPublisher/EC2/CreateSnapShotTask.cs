@@ -41,9 +41,11 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         private void CreateSnapShot(AwsClientDetails clientDetails)
         {
-            var helper = new EC2Helper(clientDetails);
-            SnapShotId = helper.CreateSnapShot(VolumeId, Description);
-            Log.LogMessage(MessageImportance.Normal, "Snapshot {0} created of volume {1} ", SnapShotId, VolumeId);
+            using (var helper = new EC2Helper(clientDetails))
+            {
+                SnapShotId = helper.CreateSnapShot(VolumeId, Description);
+                Log.LogMessage(MessageImportance.Normal, "Snapshot {0} created of volume {1} ", SnapShotId, VolumeId);
+            }
         }
     }
 }

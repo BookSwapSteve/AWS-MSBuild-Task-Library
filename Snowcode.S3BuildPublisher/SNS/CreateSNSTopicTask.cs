@@ -1,4 +1,4 @@
-﻿using Microsoft.Build.Framework;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SNS
 {
@@ -36,9 +36,11 @@ namespace Snowcode.S3BuildPublisher.SNS
 
         private void CreateTopic(AwsClientDetails clientDetails)
         {
-            var helper = new SNSHelper(clientDetails);
-            TopicArn = helper.CreateTopic(TopicName);
-            Log.LogMessage(MessageImportance.Normal, "Created Sns TopicAssociated {0}, Topic Arn {1}", TopicName, TopicArn);
+            using (var helper = new SNSHelper(clientDetails))
+            {
+                TopicArn = helper.CreateTopic(TopicName);
+                Log.LogMessage(MessageImportance.Normal, "Created Sns TopicAssociated {0}, Topic Arn {1}", TopicName, TopicArn);
+            }
         }
     }
 }

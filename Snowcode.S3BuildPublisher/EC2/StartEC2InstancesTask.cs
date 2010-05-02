@@ -32,9 +32,11 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         private void StartInstances(AwsClientDetails clientDetails)
         {
-            var helper = new EC2Helper(clientDetails);
-            helper.StartInstances(InstanceIds);
-            Log.LogMessage(MessageImportance.Normal, "Started Instances {0}", string.Join(";", InstanceIds));
+            using (var helper = new EC2Helper(clientDetails))
+            {
+                helper.StartInstances(InstanceIds);
+                Log.LogMessage(MessageImportance.Normal, "Started Instances {0}", string.Join(";", InstanceIds));
+            }
         }
 
         #endregion

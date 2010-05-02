@@ -30,9 +30,11 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         private void DisassociateIpAddress(AwsClientDetails clientDetails)
         {
-            var helper = new EC2Helper(clientDetails);
-            helper.DisassociateIpAddress(IpAddress);
-            Log.LogMessage(MessageImportance.Normal, "Disassiociated IPAddress {0}", IpAddress);
+            using (var helper = new EC2Helper(clientDetails))
+            {
+                helper.DisassociateIpAddress(IpAddress);
+                Log.LogMessage(MessageImportance.Normal, "Disassiociated IPAddress {0}", IpAddress);
+            }
         }
     }
 }

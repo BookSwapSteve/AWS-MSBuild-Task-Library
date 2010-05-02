@@ -30,9 +30,11 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         private void TerminateInstances(AwsClientDetails clientDetails)
         {
-            var helper = new EC2Helper(clientDetails);
-            helper.TerminateInstance(InstanceIds);
-            Log.LogMessage(MessageImportance.Normal, "Terminiated Instances {0}", string.Join(";", InstanceIds));
+            using (var helper = new EC2Helper(clientDetails))
+            {
+                helper.TerminateInstance(InstanceIds);
+                Log.LogMessage(MessageImportance.Normal, "Terminiated Instances {0}", string.Join(";", InstanceIds));
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.Build.Framework;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SNS
 {
@@ -48,9 +48,11 @@ namespace Snowcode.S3BuildPublisher.SNS
 
         private void PublishNotifiation(AwsClientDetails clientDetails)
         {
-            var helper = new SNSHelper(clientDetails);
-            MessageId = helper.Publish(TopicArn, Subject, Message);
-            Log.LogMessage(MessageImportance.Normal, "Published SNS Notification {0}", Subject);
+            using (var helper = new SNSHelper(clientDetails))
+            {
+                MessageId = helper.Publish(TopicArn, Subject, Message);
+                Log.LogMessage(MessageImportance.Normal, "Published SNS Notification {0}", Subject);
+            }
         }
     }
 }

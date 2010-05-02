@@ -61,11 +61,12 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         private void RunInstances(AwsClientDetails clientDetails)
         {
-            var helper = new EC2Helper(clientDetails);
-
-            // Run up the instances and return the InstanceId's
-            InstanceIds =  helper.RunInstance(ImageId, NumberOfInstances, KeyName, UserData, SecurityGroups).ToArray();
-            Log.LogMessage(MessageImportance.Normal, "Run {0} Instances", NumberOfInstances);
+            using (var helper = new EC2Helper(clientDetails))
+            {
+                // Run up the instances and return the InstanceId's
+                InstanceIds = helper.RunInstance(ImageId, NumberOfInstances, KeyName, UserData, SecurityGroups).ToArray();
+                Log.LogMessage(MessageImportance.Normal, "Run {0} Instances", NumberOfInstances);
+            }
         }
 
         #endregion
