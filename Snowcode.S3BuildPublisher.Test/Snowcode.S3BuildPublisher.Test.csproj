@@ -46,6 +46,8 @@
     <Compile Include="EC2\EC2HelperTest.cs" />
     <Compile Include="EncryptionHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SNS\SNSHelperTest.cs" />
+    <Compile Include="SQS\SQSHelperTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Snowcode.S3BuildPublisher\Snowcode.S3BuildPublisher.csproj">

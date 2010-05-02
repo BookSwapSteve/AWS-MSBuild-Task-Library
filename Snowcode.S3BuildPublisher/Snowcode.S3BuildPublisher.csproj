@@ -68,11 +68,20 @@
     <Compile Include="S3BuildPublisher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="S3Helper.cs" />
+    <Compile Include="SNS\AddSNSPermissionsTask.cs" />
+    <Compile Include="SNS\CreateSNSTopicTask.cs" />
+    <Compile Include="SNS\DeleteSNSTopicTask.cs" />
+    <Compile Include="SNS\PublishSNSNotificationTask.cs" />
+    <Compile Include="SNS\SNSHelper.cs" />
+    <Compile Include="SNS\SubscribeToSNSTopicTask.cs" />
+    <Compile Include="SNS\UnsubscribeFromSNSTopicTask.cs" />
+    <Compile Include="SQS\SQSHelper.cs" />
     <Compile Include="StoreClientDetailsTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PublishData.proj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>

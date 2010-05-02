@@ -31,6 +31,12 @@
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateSnapShotTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSnapShotTask" />
   
-  
-  
+  <!-- Simple Notification Service Tasks-->
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateSNSTopicTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSNSTopicTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="PublishSNSNotificationTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="SubscribeToSNSTopicTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="UnsubscribeFromSNSTopicTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="AddSNSPermissionsTask" />
+
 </Project>
