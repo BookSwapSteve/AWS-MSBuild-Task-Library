@@ -10,7 +10,9 @@
 
   <!-- S3 Tasks -->
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="S3BuildPublisher" />
-  
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateS3BucketTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteS3BucketTask" />
+
   <!-- EC2 Tasks -->
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="AssociateIpAddressTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DisassociateIpAddressTask" />

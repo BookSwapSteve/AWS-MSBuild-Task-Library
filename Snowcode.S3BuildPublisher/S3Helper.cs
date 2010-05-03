@@ -48,9 +48,15 @@ namespace Snowcode.S3BuildPublisher
         {
             CreateBucketIfNeeded(bucketName);
 
-            StoreFiles(files, bucketName, folder, publicRead);
+            string destinationFolder = GetDestinationFolder(folder);
+
+            StoreFiles(files, bucketName, destinationFolder, publicRead);
         }
 
+        /// <summary>
+        /// Creates a S3 Bucket.
+        /// </summary>
+        /// <param name="bucketName"></param>
         public void CreateBucket(string bucketName)
         {
             var request = new PutBucketRequest { BucketName = bucketName };
@@ -59,13 +65,13 @@ namespace Snowcode.S3BuildPublisher
 
         public void DeleteBucket(string bucketName)
         {
-            var request = new DeleteBucketRequest {BucketName = bucketName};
+            var request = new DeleteBucketRequest { BucketName = bucketName };
             Client.DeleteBucket(request);
         }
 
         public void DeleteObject(string bucketName, string key)
         {
-            var request = new DeleteObjectRequest {BucketName = bucketName, Key = key};
+            var request = new DeleteObjectRequest { BucketName = bucketName, Key = key };
             Client.DeleteObject(request);
         }
 
@@ -79,7 +85,7 @@ namespace Snowcode.S3BuildPublisher
             var request = new SetACLRequest
                               {
                                   BucketName = bucketName,
-                                  CannedACL = (S3CannedACL) Enum.Parse(typeof (S3CannedACL), cannedACL),
+                                  CannedACL = (S3CannedACL)Enum.Parse(typeof(S3CannedACL), cannedACL),
                                   Key = key
                               };
 
@@ -98,17 +104,27 @@ namespace Snowcode.S3BuildPublisher
             }
         }
 
-        private void StoreFiles(string[] files, string bucketName, string folder, bool publicRead)
+        private void StoreFiles(string[] files, string bucketName, string destinationFolder, bool publicRead)
+        {
+            foreach (string file in files)
+            {
+                // Use the filename as the key (aws filename).
+                string key = Path.GetFileName(file);
+                StoreFile(file, destinationFolder + key, bucketName, publicRead);
+            }
+        }
+
+        private string GetDestinationFolder(string folder)
         {
             string destinationFolder = folder ?? string.Empty;
 
-            foreach (string file in files)
+            // Append a folder seperator if a folder has been specified without one.
+            if (!string.IsNullOrEmpty(destinationFolder) && !destinationFolder.EndsWith("/"))
             {
-                // Use just the filename as the key (aws filename).
-                // Pre-pend on the destination folder - must use "/" as seperator, not "\".
-                string key = destinationFolder + "/" + Path.GetFileName(file);
-                StoreFile(file, key, bucketName, publicRead);
+                destinationFolder += "/";
             }
+
+            return destinationFolder;
         }
 
         private void StoreFile(string file, string key, string bucketName, bool publicRead)

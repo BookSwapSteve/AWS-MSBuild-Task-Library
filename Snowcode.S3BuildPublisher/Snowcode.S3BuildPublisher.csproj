@@ -68,6 +68,8 @@
     <Compile Include="S3BuildPublisher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="S3Helper.cs" />
+    <Compile Include="S3\CreateS3BucketTask.cs" />
+    <Compile Include="S3\DeleteS3BucketTask.cs" />
     <Compile Include="SimpleDB\CreateSimpleDBDomainTask.cs" />
     <Compile Include="SimpleDB\DeleteSimpleDBAttributesTask.cs" />
     <Compile Include="SimpleDB\DeleteSimpleDBDomainTask.cs" />
@@ -97,6 +99,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
+    <None Include="S3Examples.proj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="SNSExamples.proj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -114,6 +119,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

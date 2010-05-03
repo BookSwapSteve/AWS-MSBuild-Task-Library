@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher
@@ -7,7 +6,7 @@ namespace Snowcode.S3BuildPublisher
     /// <summary>
     /// MSBuild task to publish a set of files to a S3 bucket.
     /// </summary>
-    /// <remarks>If made public the files will be available at https://s3.amazonaws.com/bucket_name/file_name</remarks>
+    /// <remarks>If made public the files will be available at https://s3.amazonaws.com/bucket_name/folder/file_name</remarks>
     public class S3BuildPublisher : AwsTaskBase
     {
         #region Properties
@@ -82,10 +81,10 @@ namespace Snowcode.S3BuildPublisher
 
         private void ValidateFolder()
         {
-            // Don't allow a null folder.
+            // ignore if null.
             if (DestinationFolder == null)
             {
-                DestinationFolder = string.Empty;
+                return;
             }
 
             if (DestinationFolder.StartsWith(@"\") || DestinationFolder.StartsWith("/"))
@@ -93,9 +92,9 @@ namespace Snowcode.S3BuildPublisher
                 throw new Exception(@"Folder should not start with a \ or /");
             }
 
-            if (DestinationFolder.EndsWith(@"\") || DestinationFolder.EndsWith("/"))
+            if (DestinationFolder.EndsWith(@"\"))
             {
-                throw new Exception(@"Folder should not end with a \ or /");
+                throw new Exception(@"Folder should not end with a \");
             }
         }
 
