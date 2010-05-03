@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Amazon;
 using Amazon.EC2;
 using Amazon.EC2.Model;
@@ -92,7 +93,7 @@ namespace Snowcode.S3BuildPublisher.EC2
         /// <param name="keyName"></param>
         /// <param name="userData"></param>
         /// <param name="securityGroups"></param>
-        /// <returns></returns>
+        /// <returns>Returns a list of ALL instances not terminated, not just the ones started.</returns>
         public List<string> RunInstance(string imageId, int numberOfInstances, string keyName, string userData, string[] securityGroups)
         {
             var request = new RunInstancesRequest
@@ -130,6 +131,56 @@ namespace Snowcode.S3BuildPublisher.EC2
             var request = new RebootInstancesRequest { InstanceId = new List<string>(instanceIds) };
 
             Client.RebootInstances(request);
+        }
+
+        public RunningInstance DescribeInstance(string instanceId)
+        {
+            var request = new DescribeInstancesRequest {InstanceId = new List<string> {instanceId}};
+
+            DescribeInstancesResponse response = Client.DescribeInstances(request);
+
+            if (response.IsSetDescribeInstancesResult())
+            {
+                Reservation reservation = response.DescribeInstancesResult.Reservation.FirstOrDefault();
+                if (reservation!=null)
+                {
+                    return reservation.RunningInstance.FirstOrDefault();
+                }
+            }
+            throw new Exception("No details found of instance.");
+        }
+
+        /// <summary>
+        /// Wait for the instances to become in the desired state.
+        /// </summary>
+        /// <param name="instanceIds"></param>
+        /// <param name="desiredState"></param>
+        /// <param name="timeOutSeconds"></param>
+        /// <param name="pollIntervalSeconds"></param>
+        public void WaitForInstances(string[] instanceIds, string desiredState, int timeOutSeconds, int pollIntervalSeconds)
+        {
+            DateTime waitUntil = DateTime.Now.AddSeconds(timeOutSeconds);
+            var request = new DescribeInstancesRequest { InstanceId = new List<string>(instanceIds) };
+
+            do
+            {
+                DescribeInstancesResponse response = Client.DescribeInstances(request);
+
+                if (response.IsSetDescribeInstancesResult())
+                {
+                    // Are All instances in the desired state?
+                    if (response.DescribeInstancesResult.Reservation.All(
+                        reservation => reservation.RunningInstance.All(runningInstnace => runningInstnace.InstanceState.Name == desiredState))
+                        )
+                    {
+                        return;
+                    }
+                }
+
+                Thread.Sleep(new TimeSpan(0, 0, pollIntervalSeconds));
+            } while (DateTime.Now <= waitUntil);
+
+            throw new TimeoutException(string.Format("Timeout waiting for EC2 Instances state change."));
         }
 
         #endregion
@@ -238,7 +289,7 @@ namespace Snowcode.S3BuildPublisher.EC2
         /// <param name="volumeId"></param>
         public void AttachVolume(string device, string instanceId, string volumeId)
         {
-            var request = new AttachVolumeRequest {Device = device, InstanceId = instanceId, VolumeId = volumeId};
+            var request = new AttachVolumeRequest { Device = device, InstanceId = instanceId, VolumeId = volumeId };
 
             Client.AttachVolume(request);
         }

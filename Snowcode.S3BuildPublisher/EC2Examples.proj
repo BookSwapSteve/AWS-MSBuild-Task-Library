@@ -152,5 +152,127 @@
       VolumeId="vol-e9e05e80"
       EncryptionContainerName ="MySecretContainer" />
   </Target>
+  
+  <!-- Describe an EC2 Instance (Useful to get Public DNS/IP Address -->
+  <Target Name="DescribeInstance">
+    <DescribeEC2InstanceTask
+      InstanceId="$(InstanceId)"
+      EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="AmiLaunchIndex" PropertyName="AmiLaunchIndex" />
+      <Output TaskParameter="Architecture" PropertyName="Architecture" />
+      <Output TaskParameter="ImageId" PropertyName="ImageId" />
+      <Output TaskParameter="InstanceLifecycle" PropertyName="InstanceLifecycle" />
+      <Output TaskParameter="InstanceStateCode" PropertyName="InstanceStateCode" />
+      <Output TaskParameter="InstanceStateName" PropertyName="InstanceStateName" />
+      <Output TaskParameter="InstanceType" PropertyName="InstanceType" />
+      <Output TaskParameter="IpAddress" PropertyName="IpAddress" />
+      <Output TaskParameter="KernelId" PropertyName="KernelId" />
+      <Output TaskParameter="KeyName" PropertyName="KeyName" />
+      <Output TaskParameter="LaunchTime" PropertyName="LaunchTime" />
+      <Output TaskParameter="MonitoringState" PropertyName="MonitoringState" />
+      <Output TaskParameter="AvailabilityZone" PropertyName="AvailabilityZone" />
+      <Output TaskParameter="Platform" PropertyName="Platform" />
+      <Output TaskParameter="PrivateDnsName" PropertyName="PrivateDnsName" />
+      <Output TaskParameter="PublicDnsName" PropertyName="PublicDnsName" />
+      <Output TaskParameter="RamdiskId" PropertyName="RamdiskId" />
+      <Output TaskParameter="RootDeviceName" PropertyName="RootDeviceName" />
+      <Output TaskParameter="RootDeviceType" PropertyName="RootDeviceType" />
+      <Output TaskParameter="SpotInstanceRequestId" PropertyName="SpotInstanceRequestId" />
+      <Output TaskParameter="StateReason" PropertyName="StateReason" />
+      <Output TaskParameter="StateTransitionReason" PropertyName="StateTransitionReason" />
+      <Output TaskParameter="SubnetId" PropertyName="SubnetId" />
+      <Output TaskParameter="VpcId" PropertyName="VpcId" />
+    </DescribeEC2InstanceTask>
+
+    <Message Text="AmiLaunchIndex=$(AmiLaunchIndex)" />
+    <Message Text="Architecture=$(Architecture)" />
+    <Message Text="ImageId=$(ImageId)" />
+    <Message Text="InstanceLifecycle=$(InstanceLifecycle)" />
+    <Message Text="InstanceStateCode=$(InstanceStateCode)" />
+    <Message Text="InstanceStateName=$(InstanceStateName)" />
+    <Message Text="InstanceType=$(InstanceType)" />
+    <Message Text="IpAddress=$(IpAddress)" />
+    <Message Text="KernelId=$(KernelId)" />
+    <Message Text="KeyName=$(KeyName)" />
+    <Message Text="LaunchTime=$(LaunchTime)" />
+    <Message Text="MonitoringState=$(MonitoringState)" />
+    <Message Text="AvailabilityZone=$(AvailabilityZone)" />
+    <Message Text="Platform=$(Platform)" />
+    <Message Text="PrivateDnsName=$(PrivateDnsName)" />
+    <Message Text="PublicDnsName=$(PublicDnsName)" />
+    <Message Text="RamdiskId=$(RamdiskId)" />
+    <Message Text="RootDeviceName=$(RootDeviceName)" />
+    <Message Text="RootDeviceType=$(RootDeviceType)" />
+    <Message Text="SpotInstanceRequestId=$(SpotInstanceRequestId)" />
+    <Message Text="StateReason=$(StateReason)" />
+    <Message Text="StateTransitionReason=$(StateTransitionReason)" />
+    <Message Text="SubnetId=$(SubnetId)" />
+    <Message Text="VpcId=$(VpcId)" />
+  </Target>
+
+  <!-- Complex example, run new instances, stop, start and terminate them -->
+  <Target Name="RunAndWaitThenTerminate">
+
+    <!-- Start a few EC2 instances -->
+    <RunEC2InstancesTask
+      ImageId="$(ImageId)"
+      NumberOfInstances="1"
+      KeyName="$(KeyPairName)"
+      SecurityGroups="default"
+      EncryptionContainerName ="MySecretContainer">
+      <Output TaskParameter="InstanceIds" ItemName="InstanceIds" />
+    </RunEC2InstancesTask>
+
+    <!-- This is very slow, need to wait for the instances to be up and running -->
+    <Message Text="Launched Instances: @(InstanceIds)" />
+    <Message Importance="High" Text="Waiting for instances to be running"  />
+    
+    <!-- Wait for the instances to be up and running -->
+    <WaitForEC2InstancesTask
+      InstanceIds="@(InstanceIds)"
+      DesiredState="running"
+      TimeOutSeconds="1200"
+      PollIntervalSeconds="30" 
+      EncryptionContainerName ="MySecretContainer" />
+
+    <Message Importance="High" Text="Stopping the instances"  />
+    <!-- Stop the instnaces -->
+    <StopEC2InstancesTask
+      InstanceIds="@(InstanceIds)"
+      EncryptionContainerName ="MySecretContainer"/>
+
+    <!-- Wait for the instances to be stopped -->
+    <WaitForEC2InstancesTask
+      InstanceIds="@(InstanceIds)"
+      DesiredState="stopped"
+      TimeOutSeconds="1200"
+      PollIntervalSeconds="30" 
+      EncryptionContainerName ="MySecretContainer" />
+
+    <Message Importance="High" Text="Starting the instances"  />
+
+    <!-- Now start the instances again -->
+    <StartEC2InstancesTask
+      InstanceIds="@(InstanceIds)"
+      EncryptionContainerName ="MySecretContainer" />   
+
+    <!-- Wait for the instances to be running -->
+    <WaitForEC2InstancesTask
+      InstanceIds="@(InstanceIds)"
+      DesiredState="running"
+      TimeOutSeconds="1200"
+      PollIntervalSeconds="30" 
+      EncryptionContainerName ="MySecretContainer" />
+
+    <Message Importance="High" Text="Terminating the instances "  />
+    
+    <!-- Finally terminate the instances -->
+    <TerminateEC2InstancesTask
+     InstanceIds ="@(InstanceIds)"
+     EncryptionContainerName ="MySecretContainer" />
+
+    <Message Importance="High" Text="Completed.  Please double check to ensure all EC2 instances are terminated."  />
+    
+  </Target>
 
 </Project>

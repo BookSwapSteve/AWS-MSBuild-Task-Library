@@ -224,5 +224,22 @@ namespace Snowcode.S3BuildPublisher.Test.EC2
 
             ec2Helper.DetachVolume(device, instanceId, volumeId, true);
         }
+
+        [Test]
+        [Ignore("Manual run test")]
+        public void DescribeInstance_Should_ReturnInstanceDetails()
+        {
+            // NB: This test requires an EC2 Instance to succeed.
+            const string instanceId = "i-6de0a406";
+
+             var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            EC2Helper ec2Helper = new EC2Helper(clientDetails);
+
+            Amazon.EC2.Model.RunningInstance instance = ec2Helper.DescribeInstance(instanceId);
+
+            Assert.IsNotNull(instance, "No instance");
+        }
     }
 }
