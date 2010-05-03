@@ -12,7 +12,7 @@ namespace Snowcode.S3BuildPublisher.EC2
     /// </summary>
     public class EC2Helper : IDisposable
     {
-        private bool disposed;
+        private bool _disposed;
 
         #region Constructors
 
@@ -273,7 +273,7 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         virtual protected void Dispose(bool disposing)
         {
-            if (disposed)
+            if (_disposed)
             {
                 if (!disposing)
                 {
@@ -286,7 +286,7 @@ namespace Snowcode.S3BuildPublisher.EC2
                     }
                     finally
                     {
-                        disposed = true;
+                        _disposed = true;
                     }
                 }
             }

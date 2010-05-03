@@ -2,37 +2,29 @@
 <Project DefaultTargets="Debug" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project=".\Snowcode.S3BuildPublisher.Tasks.Targets" />
 
-  <!-- Modity these values to match your own EC2 InstanceId and IPAddress values -->
-  <PropertyGroup>
-    <InstanceId>i-6de0a406</InstanceId>
-    <IpAddress>184.73.176.41</IpAddress>
-    <!-- amazon/Windows-Server2003R2-i386-Base-v109 -->
-    <ImageId>ami-f11ff098</ImageId>
-    <KeyPairName>BookSwapPair1</KeyPairName>
-  </PropertyGroup>
-
   <ItemGroup>
     <SourceFiles Include="./PublishData.proj" />
-    <InstanceIds Include="$(InstanceId)" />
   </ItemGroup>
 
-  <!-- Replace these with instances that are running -->
-  <ItemGroup>
-    <TerminateInstanceIds Include="i-c7185eac" />
-    <TerminateInstanceIds Include="i-411c5a2a" />
-  </ItemGroup>
-  
   <!-- S3 -->
 
   <!-- Sample/Debug target for publishing to S3 -->
   <Target Name="Debug">
-
     <S3BuildPublisher
       EncryptionContainerName ="MySecretContainer"
       SourceFiles="@(SourceFiles)"
       DestinationBucket="s3publisher-testbucket-1"
       PublicRead="true" />
+  </Target>
 
+  <!-- Sample target for publishing to S3 storing the file in a folder structure in the S3 bucket -->
+  <Target Name="StoreFileInFolder">
+    <S3BuildPublisher
+      EncryptionContainerName ="MySecretContainer"
+      SourceFiles="@(SourceFiles)"
+      DestinationBucket="s3publisher-testbucket-1"
+      DestinationFolder="Folder1/SubFolder"
+      PublicRead="true" />
   </Target>
 
   <!-- Sample target to store AWS credentials -->
@@ -44,293 +36,6 @@
       AwsSecretAccesskey="##YOUR-SECRET-ACCESS-KEY-HERE##" />
   </Target>
   
-  <!-- EC2 -->
-
-  <Target Name="StartEC2Instance">
-    <StartEC2InstancesTask
-      InstanceIds="@(InstanceIds)"
-      EncryptionContainerName ="MySecretContainer" />
-    <!-- TODO: State will be pending, need to wait/monitor that it has actually started -->
-  </Target>
-
-  <Target Name="SetIpAddress">
-    <AssociateIpAddressTask
-      InstanceId="$(InstanceId)"
-      IpAddress="$(IpAddress)"
-      EncryptionContainerName ="MySecretContainer" />
-  </Target>
-
-  <Target Name="ReleaseIpAddress">
-    <DisassociateIpAddressTask
-      IpAddress="$(IpAddress)"
-      EncryptionContainerName ="MySecretContainer"/>
-  </Target>
-
-  <Target Name="StopEC2Instance">
-    <StopEC2InstancesTask
-      InstanceIds="@(InstanceIds)"
-      EncryptionContainerName ="MySecretContainer"/>
-    <!-- TODO: State will be stopping, need to wait/monitor that it has actually stopped -->
-  </Target>
-
-  <!-- Run an EC2 instance from the AMI ImageId -->
-  <Target Name="RunEC2Instance">
-    <RunEC2InstancesTask
-      ImageId="$(ImageId)"
-      NumberOfInstances="1"
-      KeyName="$(KeyPairName)"
-      SecurityGroups="default"
-      EncryptionContainerName ="MySecretContainer">
-      <Output TaskParameter="InstanceIds" ItemName="RunningInstanceIds" />
-    </RunEC2InstancesTask>
-
-    <!-- This is very slow, need to wait for the instances to be up and running -->
-    <Message Importance="High" Text="Please wait for instances to run up."  />
-    <Message Text="Launched Instances: @(RunningInstanceIds)" />
-  </Target>
-
-  <Target Name="RebootEC2Instance">
-    <RebootEC2InstancesTask
-      InstanceIds ="@(TerminateInstanceIds)"
-      EncryptionContainerName ="MySecretContainer" />
-  </Target>
-
-  <!-- Terminates (kills) the EC2 Instance -->
-  <Target Name="TerminateEC2Instance">
-    <TerminateEC2InstancesTask
-      InstanceIds ="@(TerminateInstanceIds)"
-      EncryptionContainerName ="MySecretContainer" />
-  </Target>
-
-  <Target Name="CreateVolume">
-    <CreateVolumeTask
-      AvailabilityZone="us-east-1b"
-      Size="2"
-      EncryptionContainerName ="MySecretContainer" >
-      <Output TaskParameter="VolumeId" PropertyName="VolumeId" />
-    </CreateVolumeTask>
-
-    <Message Text="Created volume: $(VolumeId)" />
-  </Target>
-
-  <Target Name="AttachVolume">
-    <AttachVolumeTask
-      VolumeId="vol-87c877ee"
-      InstanceId="i-6de0a406"
-      Device="xvdg"
-      EncryptionContainerName ="MySecretContainer" />
-  </Target>
-
-  <Target Name="DetachVolume">
-    <DetachVolumeTask
-      VolumeId="vol-87c877ee"
-      InstanceId="i-6de0a406"
-      Device="xvdg"
-      Force="true"
-      EncryptionContainerName ="MySecretContainer" />
-  </Target>
-
-  <Target Name="SnapShot">
-    <CreateSnapShotTask
-      VolumeId="vol-87c877ee"
-      Description="Sample SnapShot"
-      EncryptionContainerName ="MySecretContainer" >
-      <Output TaskParameter="SnapShotId" PropertyName="SnapShotId" />
-    </CreateSnapShotTask>
-
-    <Message Text="Created SnapShot: $(SnapShotId)" />
-  </Target>
-
-  <Target Name="CreateVolumeFromSnapShot">
-    <CreateVolumeFromSnapshotTask
-      SnapShotId="snap-dee846b6"
-      AvailabilityZone="us-east-1b"
-      EncryptionContainerName ="MySecretContainer" >
-      <Output TaskParameter="VolumeId" PropertyName="VolumeId" />
-    </CreateVolumeFromSnapshotTask>
-
-    <Message Text="Created volume: $(VolumeId)" />
-  </Target>
-
-  <Target Name="DeleteSnapShot">
-    <DeleteSnapShotTask
-      SnapShotId="snap-dee846b6"
-      EncryptionContainerName ="MySecretContainer" />
-  </Target>
-
-  <Target Name="DeleteVolume">
-    <DeleteVolumeTask
-      VolumeId="vol-3fc47b56"
-      EncryptionContainerName ="MySecretContainer" />
-  </Target>
   
-  <!-- Simple Notification Service (SNS) Examples -->
 
-  <!-- Create a SNS Topic that can be subscribed to -->
-  <Target Name="CreateSNSTopic">
-    <CreateSNSTopicTask
-      TopicName="ExampleTopic"
-      EncryptionContainerName ="MySecretContainer">
-      <Output TaskParameter="TopicArn" PropertyName="TopicArn" />
-    </CreateSNSTopicTask>
-
-    <Message Text="Created TopicArn: $(TopicArn)" />
-  </Target>
-
-  <!-- Deletes an SNS Topic -->
-  <Target Name="DeleteSNSTopic">
-    <!-- Creating a topic when it still exists will return the topicArn -->
-    <CreateSNSTopicTask
-      TopicName="ExampleTopic"
-      EncryptionContainerName ="MySecretContainer">
-      <Output TaskParameter="TopicArn" PropertyName="TopicArn" />
-    </CreateSNSTopicTask>
-    
-    <DeleteSNSTopicTask
-      TopicArn="$(TopicArn)"
-      EncryptionContainerName ="MySecretContainer" />
-  </Target>
-
-  <!-- Subscribe to a SNS Topic -->
-  <Target Name="SubscribeToSNS">
-    <!-- Get the SNS Topic, normally the topicArn would be known in advance. -->
-    <CreateSNSTopicTask
-      TopicName="ExampleTopic"
-      EncryptionContainerName ="MySecretContainer">
-      <Output TaskParameter="TopicArn" PropertyName="TopicArn" />
-    </CreateSNSTopicTask>
-
-    <!-- Subscribe to the SNS topic using email, you will need to confirm the -->
-    <!-- Subscription before you can recieve notifications by clicking the -->
-    <!-- link in the email sent to you from SNS. -->
-    <SubscribeToSNSTopicTask
-      TopicArn="$(TopicArn)" 
-      Protocol="email"
-      Endpoint="Your.Email@Example.com"
-      EncryptionContainerName ="MySecretContainer">
-      <Output TaskParameter="SubscriptionArn" PropertyName="SubscriptionArn" />
-    </SubscribeToSNSTopicTask>
-
-    <Message Text="Subscribed to Topic, SubscriptionArn: $(SubscriptionArn)" />
-  </Target>
-
-  <!-- Publish an SNS Notification -->
-  <Target Name="PublishSNSNotification">
-    <CreateSNSTopicTask
-      TopicName="ExampleTopic"
-      EncryptionContainerName ="MySecretContainer">
-      <Output TaskParameter="TopicArn" PropertyName="TopicArn" />
-    </CreateSNSTopicTask>
-
-    <PublishSNSNotificationTask
-      TopicArn="$(TopicArn)"
-      Subject="Test Message"
-      Message="This is a test message"
-      EncryptionContainerName ="MySecretContainer">
-      <Output TaskParameter="MessageId" PropertyName="MessageId" />
-    </PublishSNSNotificationTask>
-
-    <Message Text="Published Message : $(MessageId)" />
-  </Target>
-
-  <!-- Unsubscribe from the topic -->
-  <Target Name="UnsubscribeFromSNS">
-    <UnsubscribeFromSNSTopicTask
-      SubscriptionArn="arn:aws:sns:us-east-1:167532394791:ExampleTopic:d09a4234-d801-4a5b-a8a5-ddfdd4157852"
-      EncryptionContainerName ="MySecretContainer" />
-  </Target>
-
-  <ItemGroup>
-    <!-- Replace this with the 12 digit un-hypenated AWS Account Ids (found on Account activity page) -->
-    <!-- of the accounts you with to allow access to the Topic -->
-    <AwsAcountIds Include="123456789012" />
-  </ItemGroup>
-
-  <!-- Doesn't work, appears to be an issue with validation in AWS SDK for SNS Set Permissions -->
-  <Target Name="SetSNSPermissions">
-    <CreateSNSTopicTask
-      TopicName="ExampleTopic"
-      EncryptionContainerName ="MySecretContainer">
-      <Output TaskParameter="TopicArn" PropertyName="TopicArn" />
-    </CreateSNSTopicTask>
-    
-    <AddSNSPermissionsTask
-      TopicArn="$(TopicArn)"
-      ActionNames="*"
-      AwsAccountIds="@(AwsAcountIds)"
-      Label="Set permissions on the example topic"
-      EncryptionContainerName ="MySecretContainer" />
-  </Target>
-  
-  
-  <!-- Simple Queue Service (SQS) Examples -->
-  <Target Name="CreateQueue">
-    <CreateSQSQueueTask 
-      QueueName="ExampleQueue"
-      EncryptionContainerName ="MySecretContainer" >
-      <Output TaskParameter="QueueUrl" PropertyName="QueueUrl" />
-    </CreateSQSQueueTask>
-
-    <Message Text="Created Queue at : $(QueueUrl)" />
-  </Target>
-
-  <Target Name="DeleteQueue">
-    <!-- Create a Queue to delete -->
-    <CreateSQSQueueTask
-      QueueName="ExampleQueue"
-      EncryptionContainerName ="MySecretContainer" >
-      <Output TaskParameter="QueueUrl" PropertyName="QueueUrl" />
-    </CreateSQSQueueTask>
-    
-    <DeleteSQSQueueTask
-      QueueUrl="$(QueueUrl)"
-      EncryptionContainerName ="MySecretContainer" />
-  </Target>
-
-  <Target Name="SendMessage" >
-    <!-- Create a Queue to send a message to -->
-    <CreateSQSQueueTask
-      QueueName="ExampleQueue"
-      EncryptionContainerName ="MySecretContainer" >
-      <Output TaskParameter="QueueUrl" PropertyName="QueueUrl" />
-    </CreateSQSQueueTask>
-
-    <SendSQSMessageTask
-      QueueUrl="$(QueueUrl)"
-      MessageBody="Test Message to SQS Queue"
-      EncryptionContainerName ="MySecretContainer" >
-      <Output TaskParameter="MessageId" PropertyName="MessageId" />
-    </SendSQSMessageTask>
-
-    <Message Text="Sent message Id : $(MessageId)" />
-  </Target>
-
-  <Target Name="ReceiveMessage">
-
-    <!-- Create a Queue to receive the message from (if the queue exists then the url is returned) -->
-    <CreateSQSQueueTask
-      QueueName="ExampleQueue"
-      EncryptionContainerName ="MySecretContainer" >
-      <Output TaskParameter="QueueUrl" PropertyName="QueueUrl" />
-    </CreateSQSQueueTask>
-    
-    <!-- Retreive a message from the queue -->
-    <ReceiveSQSMessageTask
-      QueueUrl="$(QueueUrl)"
-      EncryptionContainerName ="MySecretContainer">
-      <Output TaskParameter="MessageId" PropertyName="MessageId" />
-      <Output TaskParameter="MessageBody" PropertyName="MessageBody" />
-      <Output TaskParameter="ReceiptHandle" PropertyName="ReceiptHandle" />
-    </ReceiveSQSMessageTask>
-
-    <Message Importance="High" Text="Received messageId: $(MessageId) " />
-    <Message Importance="High" Text="Received message: $(MessageBody) " />
-    
-    <!-- Now delete the message from the queue. -->
-    <DeleteSQSMessageTask
-      QueueUrl="$(QueueUrl)"
-      ReceiptHandle="$(ReceiptHandle)"
-      EncryptionContainerName ="MySecretContainer" />
-      
-  </Target>
 </Project>

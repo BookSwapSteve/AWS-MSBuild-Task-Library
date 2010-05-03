@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project DefaultTargets="Debug" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project=".\Snowcode.S3BuildPublisher.Tasks.Targets" />
+
+  <!-- Simple Queue Service (SQS) Examples -->
+  
+  <!-- Create a SQS Queue -->
+  <Target Name="CreateQueue">
+    <CreateSQSQueueTask 
+      QueueName="ExampleQueue"
+      EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="QueueUrl" PropertyName="QueueUrl" />
+    </CreateSQSQueueTask>
+
+    <Message Text="Created Queue at : $(QueueUrl)" />
+  </Target>
+
+  <!-- Delete a SQS Queue -->
+  <Target Name="DeleteQueue">
+    <!-- Create a Queue to delete -->
+    <CreateSQSQueueTask
+      QueueName="ExampleQueue"
+      EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="QueueUrl" PropertyName="QueueUrl" />
+    </CreateSQSQueueTask>
+    
+    <DeleteSQSQueueTask
+      QueueUrl="$(QueueUrl)"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <!-- Send a message to a SQS Queue -->
+  <Target Name="SendMessage" >
+    <!-- Create a Queue to send a message to -->
+    <CreateSQSQueueTask
+      QueueName="ExampleQueue"
+      EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="QueueUrl" PropertyName="QueueUrl" />
+    </CreateSQSQueueTask>
+
+    <SendSQSMessageTask
+      QueueUrl="$(QueueUrl)"
+      MessageBody="Test Message to SQS Queue"
+      EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="MessageId" PropertyName="MessageId" />
+    </SendSQSMessageTask>
+
+    <Message Text="Sent message Id : $(MessageId)" />
+  </Target>
+
+  <!-- Receive a message from a SQS Queue -->
+  <Target Name="ReceiveMessage">
+
+    <!-- Create a Queue to receive the message from (if the queue exists then the url is returned) -->
+    <CreateSQSQueueTask
+      QueueName="ExampleQueue"
+      EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="QueueUrl" PropertyName="QueueUrl" />
+    </CreateSQSQueueTask>
+    
+    <!-- Retreive a message from the queue -->
+    <ReceiveSQSMessageTask
+      QueueUrl="$(QueueUrl)"
+      EncryptionContainerName ="MySecretContainer">
+      <Output TaskParameter="MessageId" PropertyName="MessageId" />
+      <Output TaskParameter="MessageBody" PropertyName="MessageBody" />
+      <Output TaskParameter="ReceiptHandle" PropertyName="ReceiptHandle" />
+    </ReceiveSQSMessageTask>
+
+    <Message Importance="High" Text="Received messageId: $(MessageId) " />
+    <Message Importance="High" Text="Received message: $(MessageBody) " />
+    
+    <!-- Now delete the message from the queue. -->
+    <DeleteSQSMessageTask
+      QueueUrl="$(QueueUrl)"
+      ReceiptHandle="$(ReceiptHandle)"
+      EncryptionContainerName ="MySecretContainer" />
+      
+  </Target>
+</Project>

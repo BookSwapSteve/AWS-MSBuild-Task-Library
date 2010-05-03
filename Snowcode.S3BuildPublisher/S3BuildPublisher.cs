@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher
@@ -19,6 +20,11 @@ namespace Snowcode.S3BuildPublisher
         public string[] SourceFiles { get; set; }
 
         /// <summary>
+        /// Gets or sets the destination folder.
+        /// </summary>
+        public string DestinationFolder { get; set; }
+
+        /// <summary>
         /// Gets or sets the AWS S3 bucket to store the files in
         /// </summary>
         [Required]
@@ -35,12 +41,14 @@ namespace Snowcode.S3BuildPublisher
         {
             Log.LogMessage(MessageImportance.Normal, "Publishing Sourcefiles={0} to {1}", Join(SourceFiles), DestinationBucket);
 
-            // TODO: Validate that the bucket doesn't contain .
-
             ShowAclWarnings();
 
             try
             {
+                ValidateBucketName();
+
+                ValidateFolder();
+
                 AwsClientDetails clientDetails = GetClientDetails();
 
                 PublishFiles(clientDetails);
@@ -64,18 +72,37 @@ namespace Snowcode.S3BuildPublisher
             }
         }
 
-        private AwsClientDetails GetClientDetails()
+        private void ValidateBucketName()
         {
-            var clientDetailsStore = new ClientDetailsStore();
-            AwsClientDetails clientDetails = clientDetailsStore.Load(EncryptionContainerName);
-            Log.LogMessage(MessageImportance.Normal, "Connecting to AWS using AwsAccessKeyId: {0}", clientDetails.AwsAccessKeyId);
-            return clientDetails;
+            if (DestinationBucket.Contains("."))
+            {
+                throw new Exception("Bucket must not contain a .");
+            }
+        }
+
+        private void ValidateFolder()
+        {
+            // Don't allow a null folder.
+            if (DestinationFolder == null)
+            {
+                DestinationFolder = string.Empty;
+            }
+
+            if (DestinationFolder.StartsWith(@"\") || DestinationFolder.StartsWith("/"))
+            {
+                throw new Exception(@"Folder should not start with a \ or /");
+            }
+
+            if (DestinationFolder.EndsWith(@"\") || DestinationFolder.EndsWith("/"))
+            {
+                throw new Exception(@"Folder should not end with a \ or /");
+            }
         }
 
         private void PublishFiles(AwsClientDetails clientDetails)
         {
             var helper = new S3Helper(clientDetails);
-            helper.Publish(SourceFiles, DestinationBucket, PublicRead);
+            helper.Publish(SourceFiles, DestinationBucket, DestinationFolder, PublicRead);
             Log.LogMessage(MessageImportance.Normal, "Published {0} files to S3", SourceFiles.Length);
         }
 

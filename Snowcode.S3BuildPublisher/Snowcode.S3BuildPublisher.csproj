@@ -90,9 +90,18 @@
     <Compile Include="StoreClientDetailsTask.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="EC2Examples.proj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="PublishData.proj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
+    </None>
+    <None Include="SNSExamples.proj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="SQSExamples.proj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project DefaultTargets="Debug" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project=".\Snowcode.S3BuildPublisher.Tasks.Targets" />
+  
+  <!-- EC2 Examples -->
+
+  <!-- Modity these values to match your own EC2 InstanceId and IPAddress values -->
+  <PropertyGroup>
+    <InstanceId>i-6de0a406</InstanceId>
+    <IpAddress>184.73.176.41</IpAddress>
+    <!-- amazon/Windows-Server2003R2-i386-Base-v109 -->
+    <ImageId>ami-f11ff098</ImageId>
+    <KeyPairName>BookSwapPair1</KeyPairName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InstanceIds Include="$(InstanceId)" />
+  </ItemGroup>
+
+  <!-- Replace these with instances that are running -->
+  <ItemGroup>
+    <TerminateInstanceIds Include="i-c7185eac" />
+    <TerminateInstanceIds Include="i-411c5a2a" />
+  </ItemGroup>
+
+  <!-- Start an EBS based instance -->
+  <Target Name="StartEC2Instance">
+    <StartEC2InstancesTask
+      InstanceIds="@(InstanceIds)"
+      EncryptionContainerName ="MySecretContainer" />
+    <!-- TODO: State will be pending, need to wait/monitor that it has actually started -->
+  </Target>
+
+  <!-- Set a public IP Address on an EC2 instance -->
+  <Target Name="SetIpAddress">
+    <AssociateIpAddressTask
+      InstanceId="$(InstanceId)"
+      IpAddress="$(IpAddress)"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <!-- Release a public IP Address from an EC2 instance -->
+  <Target Name="ReleaseIpAddress">
+    <DisassociateIpAddressTask
+      IpAddress="$(IpAddress)"
+      EncryptionContainerName ="MySecretContainer"/>
+  </Target>
+
+  <!-- Stop en EBS based instance -->
+  <Target Name="StopEC2Instance">
+    <StopEC2InstancesTask
+      InstanceIds="@(InstanceIds)"
+      EncryptionContainerName ="MySecretContainer"/>
+    <!-- TODO: State will be stopping, need to wait/monitor that it has actually stopped -->
+  </Target>
+
+  <!-- Run an EC2 instance from the AMI ImageId -->
+  <Target Name="RunEC2Instance">
+    <RunEC2InstancesTask
+      ImageId="$(ImageId)"
+      NumberOfInstances="1"
+      KeyName="$(KeyPairName)"
+      SecurityGroups="default"
+      EncryptionContainerName ="MySecretContainer">
+      <Output TaskParameter="InstanceIds" ItemName="RunningInstanceIds" />
+    </RunEC2InstancesTask>
+
+    <!-- This is very slow, need to wait for the instances to be up and running -->
+    <Message Importance="High" Text="Please wait for instances to run up."  />
+    <Message Text="Launched Instances: @(RunningInstanceIds)" />
+  </Target>
+
+  <!-- Reboot EC2 Instance -->
+  <Target Name="RebootEC2Instance">
+    <RebootEC2InstancesTask
+      InstanceIds ="@(TerminateInstanceIds)"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <!-- Terminates (kills) the EC2 Instance -->
+  <Target Name="TerminateEC2Instance">
+    <TerminateEC2InstancesTask
+      InstanceIds ="@(TerminateInstanceIds)"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <!-- Create a new volume -->
+  <Target Name="CreateVolume">
+    <CreateVolumeTask
+      AvailabilityZone="us-east-1b"
+      Size="2"
+      EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="VolumeId" PropertyName="VolumeId" />
+    </CreateVolumeTask>
+
+    <Message Text="Created volume: $(VolumeId)" />
+  </Target>
+
+  <!-- Attach a volume to an EC2 instance -->
+  <Target Name="AttachVolume">
+    <AttachVolumeTask
+      VolumeId="vol-e9e05e80"
+      InstanceId="$(InstanceId)"
+      Device="xvdg"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <!-- Detach a volume from an EC2 instance -->
+  <Target Name="DetachVolume">
+    <DetachVolumeTask
+      VolumeId="vol-e9e05e80"
+      InstanceId="$(InstanceId)"
+      Device="xvdg"
+      Force="true"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <!-- Create a SnapShot from a volume -->
+  <Target Name="SnapShot">
+    <CreateSnapShotTask
+      VolumeId="vol-e9e05e80"
+      Description="Sample SnapShot"
+      EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="SnapShotId" PropertyName="SnapShotId" />
+    </CreateSnapShotTask>
+
+    <Message Text="Created SnapShot: $(SnapShotId)" />
+  </Target>
+ 
+  <!-- Create a volume from a SnapShot -->
+  <Target Name="CreateVolumeFromSnapShot">
+    <CreateVolumeFromSnapshotTask
+      SnapShotId="snap-dee846b6"
+      AvailabilityZone="us-east-1b"
+      EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="VolumeId" PropertyName="VolumeId" />
+    </CreateVolumeFromSnapshotTask>
+
+    <Message Text="Created volume: $(VolumeId)" />
+  </Target>
+
+  <!-- Delete a SnapSnot -->
+  <Target Name="DeleteSnapShot">
+    <DeleteSnapShotTask
+      SnapShotId="snap-dee846b6"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <!-- Delete an EC2 Volume -->
+  <Target Name="DeleteVolume">
+    <DeleteVolumeTask
+      VolumeId="vol-e9e05e80"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+</Project>

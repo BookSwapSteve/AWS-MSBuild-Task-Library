@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project DefaultTargets="Debug" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project=".\Snowcode.S3BuildPublisher.Tasks.Targets" />
+
+  <!-- Simple Notification Service (SNS) Examples -->
+
+  <!-- Create a SNS Topic that can be subscribed to -->
+  <Target Name="CreateSNSTopic">
+    <CreateSNSTopicTask
+      TopicName="ExampleTopic"
+      EncryptionContainerName ="MySecretContainer">
+      <Output TaskParameter="TopicArn" PropertyName="TopicArn" />
+    </CreateSNSTopicTask>
+
+    <Message Text="Created TopicArn: $(TopicArn)" />
+  </Target>
+
+  <!-- Deletes an SNS Topic -->
+  <Target Name="DeleteSNSTopic">
+    <!-- Creating a topic when it still exists will return the topicArn -->
+    <CreateSNSTopicTask
+      TopicName="ExampleTopic"
+      EncryptionContainerName ="MySecretContainer">
+      <Output TaskParameter="TopicArn" PropertyName="TopicArn" />
+    </CreateSNSTopicTask>
+
+    <DeleteSNSTopicTask
+      TopicArn="$(TopicArn)"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <!-- Subscribe to a SNS Topic -->
+  <Target Name="SubscribeToSNS">
+    <!-- Get the SNS Topic, normally the topicArn would be known in advance. -->
+    <CreateSNSTopicTask
+      TopicName="ExampleTopic"
+      EncryptionContainerName ="MySecretContainer">
+      <Output TaskParameter="TopicArn" PropertyName="TopicArn" />
+    </CreateSNSTopicTask>
+
+    <!-- Subscribe to the SNS topic using email, you will need to confirm the -->
+    <!-- Subscription before you can recieve notifications by clicking the -->
+    <!-- link in the email sent to you from SNS. -->
+    <SubscribeToSNSTopicTask
+      TopicArn="$(TopicArn)"
+      Protocol="email"
+      Endpoint="Your.Email@Example.com"
+      EncryptionContainerName ="MySecretContainer">
+      <Output TaskParameter="SubscriptionArn" PropertyName="SubscriptionArn" />
+    </SubscribeToSNSTopicTask>
+
+    <Message Text="Subscribed to Topic, SubscriptionArn: $(SubscriptionArn)" />
+  </Target>
+
+  <!-- Publish an SNS Notification -->
+  <Target Name="PublishSNSNotification">
+    <CreateSNSTopicTask
+      TopicName="ExampleTopic"
+      EncryptionContainerName ="MySecretContainer">
+      <Output TaskParameter="TopicArn" PropertyName="TopicArn" />
+    </CreateSNSTopicTask>
+
+    <PublishSNSNotificationTask
+      TopicArn="$(TopicArn)"
+      Subject="Test Message"
+      Message="This is a test message"
+      EncryptionContainerName ="MySecretContainer">
+      <Output TaskParameter="MessageId" PropertyName="MessageId" />
+    </PublishSNSNotificationTask>
+
+    <Message Text="Published Message : $(MessageId)" />
+  </Target>
+
+  <!-- Unsubscribe from the topic -->
+  <Target Name="UnsubscribeFromSNS">
+    <UnsubscribeFromSNSTopicTask
+      SubscriptionArn="arn:aws:sns:us-east-1:167532394791:ExampleTopic:d09a4234-d801-4a5b-a8a5-ddfdd4157852"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <ItemGroup>
+    <!-- Replace this with the 12 digit un-hypenated AWS Account Ids (found on Account activity page) -->
+    <!-- of the accounts you with to allow access to the Topic -->
+    <AwsAcountIds Include="123456789012" />
+  </ItemGroup>
+
+  <!-- This doesn't work, appears to be an issue with validation in AWS SDK for SNS Set Permissions -->
+  <Target Name="SetSNSPermissions">
+    <CreateSNSTopicTask
+      TopicName="ExampleTopic"
+      EncryptionContainerName ="MySecretContainer">
+      <Output TaskParameter="TopicArn" PropertyName="TopicArn" />
+    </CreateSNSTopicTask>
+
+    <AddSNSPermissionsTask
+      TopicArn="$(TopicArn)"
+      ActionNames="*"
+      AwsAccountIds="@(AwsAcountIds)"
+      Label="Set permissions on the example topic"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+</Project>
