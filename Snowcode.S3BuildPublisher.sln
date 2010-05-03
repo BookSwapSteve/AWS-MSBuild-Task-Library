@@ -5,6 +5,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snowcode.S3BuildPublisher",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snowcode.S3BuildPublisher.Test", "Snowcode.S3BuildPublisher.Test\Snowcode.S3BuildPublisher.Test.csproj", "{A7978B15-38C9-484C-9B71-24CE672C8070}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E212A2C8-2A16-466F-968B-785A69563498}"
+	ProjectSection(SolutionItems) = preProject
+		Build.proj = Build.proj
+		License.txt = License.txt
+		Publish.proj = Publish.proj
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
