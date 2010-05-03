@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Amazon;
 using Amazon.EC2;
 using Amazon.EC2.Model;
 using Snowcode.S3BuildPublisher.Client;
@@ -19,12 +20,12 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         public EC2Helper(string awsAccessKeyId, string awsSecretAccessKey)
         {
-            Client = new AmazonEC2Client(awsAccessKeyId, awsSecretAccessKey);
+            Client = AWSClientFactory.CreateAmazonEC2Client(awsAccessKeyId, awsSecretAccessKey);
         }
 
         public EC2Helper(AwsClientDetails clientDetails)
         {
-            Client = new AmazonEC2Client(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
+            Client = AWSClientFactory.CreateAmazonEC2Client(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
         }
 
         ~EC2Helper()
@@ -34,7 +35,7 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         #endregion
 
-        protected AmazonEC2Client Client
+        protected AmazonEC2 Client
         {
             get;
             set;

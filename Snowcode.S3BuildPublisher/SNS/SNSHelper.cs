@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Amazon;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
 using Snowcode.S3BuildPublisher.Client;
@@ -18,12 +19,12 @@ namespace Snowcode.S3BuildPublisher.SNS
 
         public SNSHelper(string awsAccessKeyId, string awsSecretAccessKey)
         {
-            Client = new AmazonSimpleNotificationServiceClient(awsAccessKeyId, awsSecretAccessKey);
+            Client = AWSClientFactory.CreateAmazonSNSClient(awsAccessKeyId, awsSecretAccessKey);
         }
 
         public SNSHelper(AwsClientDetails clientDetails)
         {
-            Client = new AmazonSimpleNotificationServiceClient(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
+            Client = AWSClientFactory.CreateAmazonSNSClient(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
         }
 
         ~SNSHelper()
@@ -33,7 +34,7 @@ namespace Snowcode.S3BuildPublisher.SNS
 
         #endregion
 
-        protected AmazonSimpleNotificationServiceClient Client
+        protected AmazonSimpleNotificationService Client
         {
             get;
             set;

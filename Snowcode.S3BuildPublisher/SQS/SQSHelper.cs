@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using Amazon;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Snowcode.S3BuildPublisher.Client;
@@ -19,12 +19,12 @@ namespace Snowcode.S3BuildPublisher.SQS
 
         public SQSHelper(string awsAccessKeyId, string awsSecretAccessKey)
         {
-            Client = new AmazonSQSClient(awsAccessKeyId, awsSecretAccessKey);
+            Client = AWSClientFactory.CreateAmazonSQSClient(awsAccessKeyId, awsSecretAccessKey);
         }
 
         public SQSHelper(AwsClientDetails clientDetails)
         {
-            Client = new AmazonSQSClient(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
+            Client = AWSClientFactory.CreateAmazonSQSClient(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
         }
 
         ~SQSHelper()
@@ -34,7 +34,7 @@ namespace Snowcode.S3BuildPublisher.SQS
 
         #endregion
 
-        protected AmazonSQSClient Client
+        protected AmazonSQS Client
         {
             get;
             set;

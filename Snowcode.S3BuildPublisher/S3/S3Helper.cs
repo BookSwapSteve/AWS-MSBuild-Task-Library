@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Amazon;
 using Amazon.S3.Util;
 using Amazon.S3.Model;
 using Amazon.S3;
@@ -18,12 +19,12 @@ namespace Snowcode.S3BuildPublisher.S3
 
         public S3Helper(string awsAccessKeyId, string awsSecretAccessKey)
         {
-            Client = new AmazonS3Client(awsAccessKeyId, awsSecretAccessKey);
+            Client = AWSClientFactory.CreateAmazonS3Client(awsAccessKeyId, awsSecretAccessKey);
         }
 
         public S3Helper(AwsClientDetails clientDetails)
         {
-            Client = new AmazonS3Client(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
+            Client = AWSClientFactory.CreateAmazonS3Client(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
         }
 
         ~S3Helper()
@@ -35,7 +36,7 @@ namespace Snowcode.S3BuildPublisher.S3
 
         #region Properties
 
-        protected AmazonS3Client Client
+        protected AmazonS3 Client
         {
             get;
             set;

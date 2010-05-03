@@ -101,9 +101,11 @@ namespace Snowcode.S3BuildPublisher.S3
 
         private void PublishFiles(AwsClientDetails clientDetails)
         {
-            var helper = new S3Helper(clientDetails);
-            helper.Publish(SourceFiles, DestinationBucket, DestinationFolder, PublicRead);
-            Log.LogMessage(MessageImportance.Normal, "Published {0} files to S3", SourceFiles.Length);
+            using (var helper = new S3Helper(clientDetails))
+            {
+                helper.Publish(SourceFiles, DestinationBucket, DestinationFolder, PublicRead);
+                Log.LogMessage(MessageImportance.Normal, "Published {0} files to S3", SourceFiles.Length);
+            }
         }
 
         #endregion
