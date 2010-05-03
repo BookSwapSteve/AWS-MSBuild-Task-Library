@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Amazon;
 using Amazon.SQS;
 using Amazon.SQS.Model;
@@ -129,6 +130,31 @@ namespace Snowcode.S3BuildPublisher.SQS
                 return response.ReceiveMessageResult.Message.FirstOrDefault();
             }
             return null;
+        }
+
+        /// <summary>
+        /// Wait for a message on the Queue
+        /// </summary>
+        /// <param name="queueUrl"></param>
+        /// <param name="timeOutSeconds"></param>
+        /// <param name="pollIntervalSeconds"></param>
+        /// <returns></returns>
+        /// <exception cref="TimeoutException">thrown if timeOutSeconds is exceeded.</exception>
+        public Message WaitForMessage(string queueUrl, int timeOutSeconds, int pollIntervalSeconds)
+        {
+            DateTime waitUntil = DateTime.Now.AddSeconds(timeOutSeconds);
+
+            do
+            {
+                Message message = ReceiveMessage(queueUrl);
+                if (message!=null)
+                {
+                    return message;
+                }
+                Thread.Sleep(new TimeSpan(0, 0, pollIntervalSeconds));
+            } while (DateTime.Now <= waitUntil);
+
+            throw new TimeoutException(string.Format("Timeout waiting for a message on the Queue {0}", queueUrl));
         }
 
         /// <summary>

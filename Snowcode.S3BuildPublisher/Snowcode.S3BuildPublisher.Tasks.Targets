@@ -50,6 +50,7 @@
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSQSQueueTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="SendSQSMessageTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="ReceiveSQSMessageTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="WaitForSQSMessageTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSQSMessageTask" />
   
   <!-- SimpleDB -->

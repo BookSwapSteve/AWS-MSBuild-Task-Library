@@ -115,5 +115,21 @@ namespace Snowcode.S3BuildPublisher.Test.SQS
                 helper.DeleteMessage(queueUrl, message.ReceiptHandle);    
             }
         }
+
+        [Test]
+        [Ignore("Manual run test")]
+        [ExpectedException(typeof(TimeoutException))]
+        public void WaitForMessage_Should_ThrowTimeoutException()
+        {
+            var store = new ClientDetailsStore();
+            AwsClientDetails clientDetails = store.Load(Container);
+
+            SQSHelper helper = new SQSHelper(clientDetails);
+
+            string queueUrl = helper.CreateQueue("TestQ");
+
+            // Get the sent message.
+            helper.WaitForMessage(queueUrl, 10, 5);
+        }
     }
 }

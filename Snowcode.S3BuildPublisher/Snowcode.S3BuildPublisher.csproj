@@ -94,6 +94,7 @@
     <Compile Include="SQS\ReceiveSQSMessageTask.cs" />
     <Compile Include="SQS\SendSQSMessageTask.cs" />
     <Compile Include="SQS\SQSHelper.cs" />
+    <Compile Include="SQS\WaitForSQSMessageTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EC2Examples.proj">
