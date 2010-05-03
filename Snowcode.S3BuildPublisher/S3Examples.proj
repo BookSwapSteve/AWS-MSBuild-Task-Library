@@ -9,11 +9,11 @@
   <!-- S3 Examples -->
 
   <!-- Sample/Debug target for publishing to S3 -->
-  <Target Name="Debug">
+  <Target Name="Publish">
     <S3BuildPublisher
       EncryptionContainerName ="MySecretContainer"
       SourceFiles="@(SourceFiles)"
-      DestinationBucket="s3publisher-testbucket-1"
+      DestinationBucket="s3publisher-testbucket-2"
       PublicRead="true" />
   </Target>
 
@@ -22,7 +22,7 @@
     <S3BuildPublisher
       EncryptionContainerName ="MySecretContainer"
       SourceFiles="@(SourceFiles)"
-      DestinationBucket="s3publisher-testbucket-1"
+      DestinationBucket="s3publisher-testbucket-2"
       DestinationFolder="Folder1/SubFolder"
       PublicRead="true" />
   </Target>
@@ -35,6 +35,37 @@
 
   <Target Name="DeleteBucket">
     <DeleteS3BucketTask
+      BucketName="ExampleBucket-1"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <Target Name="PutText">
+    <PutS3TextObjectTask
+      BucketName="ExampleBucket-1"
+      Key="ExampleTextObject1"
+      Text="Some example text that will appear in the object"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <Target Name="PutFile">
+    <PutS3FileObjectTask
+      BucketName="ExampleBucket-1"
+      Key="Folder1/SubFolder/S3Examples.proj"
+      FileName="./S3Examples.proj"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <Target Name="MakePublic">
+    <SetS3ObjectAclTask
+      BucketName="ExampleBucket-1"
+      Key="Folder1/SubFolder/S3Examples.proj"
+      CannedAcl="PublicRead"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <Target Name="DeleteFile">
+    <DeleteS3ObjectTask
+      Key="Folder1/SubFolder/S3Examples.proj"
       BucketName="ExampleBucket-1"
       EncryptionContainerName ="MySecretContainer" />
   </Target>

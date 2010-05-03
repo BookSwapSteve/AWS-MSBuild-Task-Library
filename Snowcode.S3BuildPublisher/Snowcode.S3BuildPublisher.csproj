@@ -69,8 +69,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="S3\CreateS3BucketTask.cs" />
     <Compile Include="S3\DeleteS3BucketTask.cs" />
+    <Compile Include="S3\DeleteS3ObjectTask.cs" />
+    <Compile Include="S3\PutS3FileObjectTask.cs" />
+    <Compile Include="S3\PutS3TextObjectTask.cs" />
     <Compile Include="S3\S3BuildPublisher.cs" />
     <Compile Include="S3\S3Helper.cs" />
+    <Compile Include="S3\SetS3ObjectAclTask.cs" />
     <Compile Include="SimpleDB\CreateSimpleDBDomainTask.cs" />
     <Compile Include="SimpleDB\DeleteSimpleDBAttributesTask.cs" />
     <Compile Include="SimpleDB\DeleteSimpleDBDomainTask.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Amazon;
 using Amazon.S3.Util;
@@ -46,6 +47,13 @@ namespace Snowcode.S3BuildPublisher.S3
 
         #region Public methods
 
+        /// <summary>
+        /// Publish a file to a S3 bucket, in the folder specified, optionally making it publically readable.
+        /// </summary>
+        /// <param name="files"></param>
+        /// <param name="bucketName"></param>
+        /// <param name="folder"></param>
+        /// <param name="publicRead"></param>
         public void Publish(string[] files, string bucketName, string folder, bool publicRead)
         {
             CreateBucketIfNeeded(bucketName);
@@ -65,12 +73,53 @@ namespace Snowcode.S3BuildPublisher.S3
             Client.PutBucket(request);
         }
 
+        /// <summary>
+        /// Delete a S3 Bucket.
+        /// </summary>
+        /// <param name="bucketName"></param>
         public void DeleteBucket(string bucketName)
         {
             var request = new DeleteBucketRequest { BucketName = bucketName };
             Client.DeleteBucket(request);
         }
 
+        /// <summary>
+        /// Puts a file into a S3 bucket.
+        /// </summary>
+        /// <param name="bucketName"></param>
+        /// <param name="key"></param>
+        /// <param name="file"></param>
+        public void PutFileObject(string bucketName, string key, string file)
+        {
+            var request = new PutObjectRequest { FilePath = file, BucketName = bucketName, Key = key };
+
+            Client.PutObject(request);
+        }
+
+        /// <summary>
+        /// Creates a text object in the S3 bucket.
+        /// </summary>
+        /// <param name="bucketName"></param>
+        /// <param name="key"></param>
+        /// <param name="text"></param>
+        public void PutTextObject(string bucketName, string key, string text)
+        {
+            var request = new PutObjectRequest
+                              {
+                                  ContentType = "text/html",
+                                  ContentBody = text,
+                                  BucketName = bucketName,
+                                  Key = key
+                              };
+
+            Client.PutObject(request);
+        }
+
+        /// <summary>
+        /// Seletes an object from a S3 bucket.
+        /// </summary>
+        /// <param name="bucketName"></param>
+        /// <param name="key"></param>
         public void DeleteObject(string bucketName, string key)
         {
             var request = new DeleteObjectRequest { BucketName = bucketName, Key = key };
@@ -81,7 +130,7 @@ namespace Snowcode.S3BuildPublisher.S3
         /// Sets the ACL
         /// </summary>
         /// <param name="bucketName"></param>
-        /// <param name="cannedACL">ACL to use, AuthenticaticatedRead, BucketOwnerFullControl, BucketOwnerRead, NoACL, Private, PublicRead, PublicReadWrite</param>
+        /// <param name="cannedACL">ACL to use, AuthenticatedRead, BucketOwnerFullControl, BucketOwnerRead, NoACL, Private, PublicRead, PublicReadWrite</param>
         public void SetAcl(string bucketName, string cannedACL, string key)
         {
             var request = new SetACLRequest
@@ -175,5 +224,6 @@ namespace Snowcode.S3BuildPublisher.S3
         }
 
         #endregion
+
     }
 }

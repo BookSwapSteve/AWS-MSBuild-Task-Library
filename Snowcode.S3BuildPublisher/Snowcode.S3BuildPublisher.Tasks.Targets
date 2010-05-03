@@ -12,6 +12,10 @@
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="S3BuildPublisher" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateS3BucketTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteS3BucketTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="PutS3TextObjectTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="PutS3FileObjectTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteS3ObjectTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="SetS3ObjectAclTask" />
 
   <!-- EC2 Tasks -->
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="AssociateIpAddressTask" />
