@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using NUnit.Framework;
+using Snowcode.S3BuildPublisher.Client;
 
 namespace Snowcode.S3BuildPublisher.Test
 {

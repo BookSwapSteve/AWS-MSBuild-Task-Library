@@ -2,7 +2,7 @@
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace Snowcode.S3BuildPublisher
+namespace Snowcode.S3BuildPublisher.Client
 {
     /// <summary>
     /// MSBuid task responsible for storing Amazon AWS client connection details.

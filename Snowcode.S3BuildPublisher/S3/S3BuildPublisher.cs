@@ -1,7 +1,8 @@
 ﻿using System;
 using Microsoft.Build.Framework;
+using Snowcode.S3BuildPublisher.Client;
 
-namespace Snowcode.S3BuildPublisher
+namespace Snowcode.S3BuildPublisher.S3
 {
     /// <summary>
     /// MSBuild task to publish a set of files to a S3 bucket.

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Build.Framework;
+using Snowcode.S3BuildPublisher.Client;
 
 namespace Snowcode.S3BuildPublisher.SNS
 {

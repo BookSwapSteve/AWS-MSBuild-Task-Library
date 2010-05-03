@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
+using Snowcode.S3BuildPublisher.Client;
 
 namespace Snowcode.S3BuildPublisher.SNS
 {

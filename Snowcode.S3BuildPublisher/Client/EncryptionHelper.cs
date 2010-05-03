@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Snowcode.S3BuildPublisher
+namespace Snowcode.S3BuildPublisher.Client
 {
     public class EncryptionHelper
     {

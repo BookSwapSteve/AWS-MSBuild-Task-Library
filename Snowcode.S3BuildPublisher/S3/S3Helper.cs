@@ -3,8 +3,9 @@ using System.IO;
 using Amazon.S3.Util;
 using Amazon.S3.Model;
 using Amazon.S3;
+using Snowcode.S3BuildPublisher.Client;
 
-namespace Snowcode.S3BuildPublisher
+namespace Snowcode.S3BuildPublisher.S3
 {
     /// <summary>
     /// Helper class to connect to Amazon aws S3 and store files.

@@ -1,4 +1,4 @@
-﻿namespace Snowcode.S3BuildPublisher
+﻿namespace Snowcode.S3BuildPublisher.Client
 {
     /// <summary>
     /// Holds Client connection details for AWS

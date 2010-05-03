@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using Snowcode.S3BuildPublisher.Client;
 using Snowcode.S3BuildPublisher.SimpleDB;
 
 namespace Snowcode.S3BuildPublisher.Test.SimpleDB

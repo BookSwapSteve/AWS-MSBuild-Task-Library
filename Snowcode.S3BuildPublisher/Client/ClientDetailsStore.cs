@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Win32;
 
-namespace Snowcode.S3BuildPublisher
+namespace Snowcode.S3BuildPublisher.Client
 {
     /// <summary>
     /// Store AWS client details in the HKCU registry hive.

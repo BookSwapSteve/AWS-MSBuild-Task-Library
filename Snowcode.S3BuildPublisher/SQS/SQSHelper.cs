@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Amazon.SQS;
 using Amazon.SQS.Model;
+using Snowcode.S3BuildPublisher.Client;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {

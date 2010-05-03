@@ -4,6 +4,7 @@ using System.Linq;
 using Amazon;
 using Amazon.SimpleDB;
 using Amazon.SimpleDB.Model;
+using Snowcode.S3BuildPublisher.Client;
 using Attribute = Amazon.SimpleDB.Model.Attribute;
 
 namespace Snowcode.S3BuildPublisher.SimpleDB

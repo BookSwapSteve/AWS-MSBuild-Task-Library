@@ -1,5 +1,6 @@
 ﻿using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Snowcode.S3BuildPublisher.Client;
 
 namespace Snowcode.S3BuildPublisher
 {

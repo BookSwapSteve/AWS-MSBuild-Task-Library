@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using NUnit.Framework;
+using Snowcode.S3BuildPublisher.Client;
 using Snowcode.S3BuildPublisher.SQS;
 
 namespace Snowcode.S3BuildPublisher.Test.SQS

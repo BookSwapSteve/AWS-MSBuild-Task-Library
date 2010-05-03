@@ -1,4 +1,6 @@
 ﻿using NUnit.Framework;
+using Snowcode.S3BuildPublisher.Client;
+using Snowcode.S3BuildPublisher.S3;
 
 namespace Snowcode.S3BuildPublisher.Test.S3
 {

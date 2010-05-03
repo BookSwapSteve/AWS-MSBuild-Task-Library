@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using Snowcode.S3BuildPublisher.Client;
 using Snowcode.S3BuildPublisher.EC2;
 
 namespace Snowcode.S3BuildPublisher.Test.EC2

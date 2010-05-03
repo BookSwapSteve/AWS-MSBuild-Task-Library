@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Amazon.EC2;
 using Amazon.EC2.Model;
+using Snowcode.S3BuildPublisher.Client;
 
 namespace Snowcode.S3BuildPublisher.EC2
 {
