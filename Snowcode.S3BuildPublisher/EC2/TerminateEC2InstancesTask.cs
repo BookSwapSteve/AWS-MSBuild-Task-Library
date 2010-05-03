@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.EC2
 {
@@ -19,13 +20,21 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         public override bool Execute()
         {
-            Log.LogMessage(MessageImportance.Normal, "Terminating AWS EC2 instances {0}", string.Join(";", InstanceIds));
+            Log.LogMessage(MessageImportance.Normal, "Terminating AWS EC2 instances {0}", Join(InstanceIds));
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            TerminateInstances(clientDetails);
+                TerminateInstances(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void TerminateInstances(AwsClientDetails clientDetails)
@@ -33,7 +42,7 @@ namespace Snowcode.S3BuildPublisher.EC2
             using (var helper = new EC2Helper(clientDetails))
             {
                 helper.TerminateInstance(InstanceIds);
-                Log.LogMessage(MessageImportance.Normal, "Terminiated Instances {0}", string.Join(";", InstanceIds));
+                Log.LogMessage(MessageImportance.Normal, "Terminiated Instances {0}", Join(InstanceIds));
             }
         }
     }

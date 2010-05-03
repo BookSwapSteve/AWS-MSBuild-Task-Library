@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SNS
@@ -27,11 +28,19 @@ namespace Snowcode.S3BuildPublisher.SNS
         {
             Log.LogMessage(MessageImportance.Normal, "Creating SNS Topic {0}", TopicName);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            CreateTopic(clientDetails);
+                CreateTopic(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void CreateTopic(AwsClientDetails clientDetails)

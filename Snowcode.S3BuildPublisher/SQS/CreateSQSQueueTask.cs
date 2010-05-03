@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {
@@ -27,11 +28,19 @@ namespace Snowcode.S3BuildPublisher.SQS
         {
             Log.LogMessage(MessageImportance.Normal, "Creating SQS Queue {0}", QueueName);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            CreateQueue(clientDetails);
+                CreateQueue(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void CreateQueue(AwsClientDetails clientDetails)

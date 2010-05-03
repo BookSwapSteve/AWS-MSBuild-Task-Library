@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.EC2
 {
@@ -33,11 +34,19 @@ namespace Snowcode.S3BuildPublisher.EC2
         {
             Log.LogMessage(MessageImportance.Normal, "Attaching volume {0} to instance {1} Device:{2}", VolumeId, InstanceId, Device);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            AttachVolume(clientDetails);
+                AttachVolume(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void AttachVolume(AwsClientDetails clientDetails)

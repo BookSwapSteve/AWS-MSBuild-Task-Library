@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SNS
@@ -19,7 +20,7 @@ namespace Snowcode.S3BuildPublisher.SNS
         /// Gets or sets the protocol. Pptions are http, https, email, email-json, sqs
         /// </summary>
         [Required]
-        public string Protocol{ get; set; }
+        public string Protocol { get; set; }
 
         /// <summary>
         /// Gets or sets the endpoint.  i.e. email address, http(s) url, SQS Arn.
@@ -46,11 +47,19 @@ namespace Snowcode.S3BuildPublisher.SNS
         {
             Log.LogMessage(MessageImportance.Normal, "Subscribing to SNS Topic {0}", TopicArn);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            Subscribe(clientDetails);
+                Subscribe(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void Subscribe(AwsClientDetails clientDetails)

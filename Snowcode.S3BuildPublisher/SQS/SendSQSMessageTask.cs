@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {
@@ -25,7 +26,7 @@ namespace Snowcode.S3BuildPublisher.SQS
         /// Gets and sets the MessageId of the sent message.
         /// </summary>
         [Output]
-        public string MessageId{ get; set; }
+        public string MessageId { get; set; }
 
         #endregion
 
@@ -33,11 +34,19 @@ namespace Snowcode.S3BuildPublisher.SQS
         {
             Log.LogMessage(MessageImportance.Normal, "Sending message to Queue {0}", QueueUrl);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            SendMessage(clientDetails);
+                SendMessage(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void SendMessage(AwsClientDetails clientDetails)

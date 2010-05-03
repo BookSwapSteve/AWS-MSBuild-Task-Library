@@ -50,6 +50,7 @@
     <Compile Include="EC2\EC2HelperTest.cs" />
     <Compile Include="EncryptionHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleDB\SimpleDBHelperTest.cs" />
     <Compile Include="SNS\SNSHelperTest.cs" />
     <Compile Include="SQS\SQSHelperTest.cs" />
   </ItemGroup>

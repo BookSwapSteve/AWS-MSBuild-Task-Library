@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project=".\Snowcode.S3BuildPublisher.Tasks.Targets" />
+
+  <!-- Create a domain -->
+  <Target Name="CreateDomain">
+    <CreateSimpleDBDomainTask
+      DomainName="SimpleDBExample"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <!-- Delete a domain -->
+  <Target Name="DeleteDomain">
+    <DeleteSimpleDBDomainTask
+      DomainName="SimpleDBExample"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <!-- Store some data in the domain -->
+  <Target Name="StoreData">
+    <PutSimpleDBAttributeTask
+      DomainName="SimpleDBExample"
+      ItemName="ProductName"
+      AttributeName="CurrentVersion"
+      Replace="True"
+      AttributeValue="1.0.0.25" 
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+  <!-- Read data back from the domain -->
+  <Target Name="ReadData">
+    <GetSimpleDBAttributeTask
+      DomainName="SimpleDBExample"
+      ItemName="ProductName"
+      AttributeName="CurrentVersion"
+      EncryptionContainerName ="MySecretContainer">
+      <Output TaskParameter="AttributeValue" PropertyName="AttributeValue" />
+    </GetSimpleDBAttributeTask>
+
+    <Message Text="Read value : $(AttributeValue) " />
+  </Target>
+
+  <!-- Delete the data -->
+  <Target Name="DeleteData">
+    <!-- Note that this is plural and takes a list of attribute names, unlike the other tasks.-->
+    <DeleteSimpleDBAttributesTask
+       DomainName="SimpleDBExample"
+      ItemName="ProductName"
+      AttributeNames="CurrentVersion;PreviousVersion"
+      EncryptionContainerName ="MySecretContainer" />
+  </Target>
+</Project>

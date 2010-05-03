@@ -11,7 +11,7 @@ namespace Snowcode.S3BuildPublisher.SNS
     /// </summary>
     public class SNSHelper : IDisposable
     {
-        private bool disposed;
+        private bool _disposed;
 
         #region Constructors
 
@@ -162,7 +162,7 @@ namespace Snowcode.S3BuildPublisher.SNS
 
         virtual protected void Dispose(bool disposing)
         {
-            if (disposed)
+            if (_disposed)
             {
                 if (!disposing)
                 {
@@ -175,7 +175,7 @@ namespace Snowcode.S3BuildPublisher.SNS
                     }
                     finally
                     {
-                        disposed = true;
+                        _disposed = true;
                     }
                 }
             }

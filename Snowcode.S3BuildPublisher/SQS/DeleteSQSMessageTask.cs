@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {
@@ -27,11 +28,19 @@ namespace Snowcode.S3BuildPublisher.SQS
         {
             Log.LogMessage(MessageImportance.Normal, "Deleting message {0} from Queue {1}", ReceiptHandle, QueueUrl);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            DeleteMessage(clientDetails);
+                DeleteMessage(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void DeleteMessage(AwsClientDetails clientDetails)

@@ -1,4 +1,4 @@
-﻿using Microsoft.Build.Utilities;
+﻿using System;
 using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher
@@ -7,7 +7,7 @@ namespace Snowcode.S3BuildPublisher
     /// MSBuild task to publish a set of files to a S3 bucket.
     /// </summary>
     /// <remarks>If made public the files will be available at https://s3.amazonaws.com/bucket_name/file_name</remarks>
-    public class S3BuildPublisher : Task
+    public class S3BuildPublisher : AwsTaskBase
     {
         #region Properties
 
@@ -25,12 +25,6 @@ namespace Snowcode.S3BuildPublisher
         public string DestinationBucket { get; set; }
 
         /// <summary>
-        /// Gets or sets the container to be used when decrypting the stored credentials.
-        /// </summary>
-        [Required]
-        public string EncryptionContainerName { get; set; }
-
-        /// <summary>
         /// Gets or sets if the files should be publically readable
         /// </summary>
         public bool PublicRead { get; set; }
@@ -39,17 +33,25 @@ namespace Snowcode.S3BuildPublisher
 
         public override bool Execute()
         {
-            Log.LogMessage(MessageImportance.Normal, "Publishing Sourcefiles={0} to {1}", string.Join(";", SourceFiles), DestinationBucket);
+            Log.LogMessage(MessageImportance.Normal, "Publishing Sourcefiles={0} to {1}", Join(SourceFiles), DestinationBucket);
 
             // TODO: Validate that the bucket doesn't contain .
-            
+
             ShowAclWarnings();
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            PublishFiles(clientDetails);
+                PublishFiles(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         #region Private methods

@@ -45,5 +45,11 @@
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="SendSQSMessageTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="ReceiveSQSMessageTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSQSMessageTask" />
-
+  
+  <!-- SimpleDB -->
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateSimpleDBDomainTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSimpleDBDomainTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="PutSimpleDBAttributeTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="GetSimpleDBAttributeTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSimpleDBAttributesTask" />
 </Project>

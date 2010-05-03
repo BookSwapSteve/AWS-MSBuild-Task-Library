@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.EC2
 {
@@ -50,11 +51,19 @@ namespace Snowcode.S3BuildPublisher.EC2
         {
             Log.LogMessage(MessageImportance.Normal, "Running {0} AWS EC2 instances from ImageId {1}", NumberOfInstances, ImageId);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            RunInstances(clientDetails);
+                RunInstances(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         #region Private methods

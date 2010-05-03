@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.EC2
 {
@@ -19,7 +20,7 @@ namespace Snowcode.S3BuildPublisher.EC2
         /// Gets or sets the volume size in MiB
         /// </summary>
         [Required]
-        public string Size { get; set;}
+        public string Size { get; set; }
 
         /// <summary>
         /// Gets or sets the VolumeId of the created volume.
@@ -33,11 +34,19 @@ namespace Snowcode.S3BuildPublisher.EC2
         {
             Log.LogMessage(MessageImportance.Normal, "Creating new volume in {0} of size {1}MiB", AvailabilityZone, Size);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            CreateVolume(clientDetails);
+                CreateVolume(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void CreateVolume(AwsClientDetails clientDetails)

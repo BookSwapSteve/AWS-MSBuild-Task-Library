@@ -18,5 +18,10 @@ namespace Snowcode.S3BuildPublisher
             Log.LogMessage(MessageImportance.Normal, "Connecting to AWS using AwsAccessKeyId: {0}", clientDetails.AwsAccessKeyId);
             return clientDetails;
         }
+
+        virtual protected string Join(string[] values)
+        {
+            return string.Join(";", values);
+        }
     }
 }

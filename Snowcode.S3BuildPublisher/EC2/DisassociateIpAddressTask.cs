@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.EC2
 {
@@ -13,7 +14,7 @@ namespace Snowcode.S3BuildPublisher.EC2
         /// Gets or sets the IpAddress
         /// </summary>
         [Required]
-        public string IpAddress{ get; set; }
+        public string IpAddress { get; set; }
 
         #endregion
 
@@ -21,11 +22,19 @@ namespace Snowcode.S3BuildPublisher.EC2
         {
             Log.LogMessage(MessageImportance.Normal, "Disassociating IP Address {0}", IpAddress);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            DisassociateIpAddress(clientDetails);
+                DisassociateIpAddress(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void DisassociateIpAddress(AwsClientDetails clientDetails)

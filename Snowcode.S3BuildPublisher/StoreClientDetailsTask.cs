@@ -39,7 +39,7 @@ namespace Snowcode.S3BuildPublisher
             }
             catch (Exception ex)
             {
-                Log.LogMessage(MessageImportance.High, "Error storing client details: {0}.", ex.Message);
+                Log.LogErrorFromException(ex);
                 return false;
             }
         }

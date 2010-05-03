@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.EC2
 {
@@ -27,11 +28,19 @@ namespace Snowcode.S3BuildPublisher.EC2
         {
             Log.LogMessage(MessageImportance.Normal, "Associating IP Address {0} with AWS EC2 instance {1}", IpAddress, InstanceId);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            AssociateIpAddress(clientDetails);
+                AssociateIpAddress(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void AssociateIpAddress(AwsClientDetails clientDetails)

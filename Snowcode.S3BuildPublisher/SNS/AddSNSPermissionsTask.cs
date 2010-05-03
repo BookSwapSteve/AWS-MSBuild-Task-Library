@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SNS
 {
@@ -39,11 +40,19 @@ namespace Snowcode.S3BuildPublisher.SNS
         {
             Log.LogMessage(MessageImportance.Normal, "Adding SNS permissions to Topic {0}", TopicArn);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            AddPermissions(clientDetails);
+                AddPermissions(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void AddPermissions(AwsClientDetails clientDetails)
@@ -51,7 +60,7 @@ namespace Snowcode.S3BuildPublisher.SNS
             using (var helper = new SNSHelper(clientDetails))
             {
                 helper.AddPermission(ActionNames, AwsAccountIds, Label, TopicArn);
-                Log.LogMessage(MessageImportance.Normal, "Set permissiosn for AWS Accounts {0} to Topic Arn {1}", string.Join(";", AwsAccountIds), TopicArn);
+                Log.LogMessage(MessageImportance.Normal, "Set permissiosn for AWS Accounts {0} to Topic Arn {1}", Join(AwsAccountIds), TopicArn);
             }
         }
     }

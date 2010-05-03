@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SNS
@@ -21,11 +22,19 @@ namespace Snowcode.S3BuildPublisher.SNS
         {
             Log.LogMessage(MessageImportance.Normal, "Deleting SNS Topic {0}", TopicArn);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            DeleteTopic(clientDetails);
+                DeleteTopic(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void DeleteTopic(AwsClientDetails clientDetails)

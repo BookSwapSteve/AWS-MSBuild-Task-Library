@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SNS
 {
@@ -21,11 +22,19 @@ namespace Snowcode.S3BuildPublisher.SNS
         {
             Log.LogMessage(MessageImportance.Normal, "Unsubscribing from subscription {0}", SubscriptionArn);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            Unsubscribe(clientDetails);
+                Unsubscribe(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void Unsubscribe(AwsClientDetails clientDetails)

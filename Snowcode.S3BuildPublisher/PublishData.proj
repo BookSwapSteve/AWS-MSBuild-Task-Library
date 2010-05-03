@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Project DefaultTargets="SetSNSPermissions" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Debug" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project=".\Snowcode.S3BuildPublisher.Tasks.Targets" />
 
   <!-- Modity these values to match your own EC2 InstanceId and IPAddress values -->
@@ -333,5 +333,4 @@
       EncryptionContainerName ="MySecretContainer" />
       
   </Target>
-
 </Project>

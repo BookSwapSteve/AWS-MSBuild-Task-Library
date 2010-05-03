@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SNS
@@ -39,11 +40,19 @@ namespace Snowcode.S3BuildPublisher.SNS
         {
             Log.LogMessage(MessageImportance.Normal, "Publishing SNS Notification to Topic {0}", TopicArn);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            PublishNotifiation(clientDetails);
+                PublishNotifiation(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void PublishNotifiation(AwsClientDetails clientDetails)

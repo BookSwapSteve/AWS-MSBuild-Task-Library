@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {
@@ -45,11 +46,19 @@ namespace Snowcode.S3BuildPublisher.SQS
         {
             Log.LogMessage(MessageImportance.Normal, "Receiving message from Queue {0}", QueueUrl);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            ReceiveMessage(clientDetails);
+                ReceiveMessage(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void ReceiveMessage(AwsClientDetails clientDetails)

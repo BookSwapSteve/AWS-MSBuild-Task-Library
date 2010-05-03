@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.EC2
 {
@@ -31,13 +32,21 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         public override bool Execute()
         {
-            Log.LogMessage(MessageImportance.Normal, "Creating volume from SnapShot {0} in {1}",SnapShotId, AvailabilityZone);
+            Log.LogMessage(MessageImportance.Normal, "Creating volume from SnapShot {0} in {1}", SnapShotId, AvailabilityZone);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            CreateVolume(clientDetails);
+                CreateVolume(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void CreateVolume(AwsClientDetails clientDetails)

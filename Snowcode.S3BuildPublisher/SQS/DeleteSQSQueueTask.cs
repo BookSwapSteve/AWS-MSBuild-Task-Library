@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System;
+using Microsoft.Build.Framework;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {
@@ -21,11 +22,19 @@ namespace Snowcode.S3BuildPublisher.SQS
         {
             Log.LogMessage(MessageImportance.Normal, "Deleting SQS Queue at {0}", QueueUrl);
 
-            AwsClientDetails clientDetails = GetClientDetails();
+            try
+            {
+                AwsClientDetails clientDetails = GetClientDetails();
 
-            DeleteQueue(clientDetails);
+                DeleteQueue(clientDetails);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.LogErrorFromException(ex);
+                return false;
+            }
         }
 
         private void DeleteQueue(AwsClientDetails clientDetails)

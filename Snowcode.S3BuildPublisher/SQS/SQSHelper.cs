@@ -12,7 +12,7 @@ namespace Snowcode.S3BuildPublisher.SQS
     /// </summary>
     public class SQSHelper : IDisposable
     {
-        private bool disposed;
+        private bool _disposed;
 
         #region Constructors
 
@@ -152,7 +152,7 @@ namespace Snowcode.S3BuildPublisher.SQS
 
         virtual protected void Dispose(bool disposing)
         {
-            if (disposed)
+            if (_disposed)
             {
                 if (!disposing)
                 {
@@ -165,7 +165,7 @@ namespace Snowcode.S3BuildPublisher.SQS
                     }
                     finally
                     {
-                        disposed = true;
+                        _disposed = true;
                     }
                 }
             }
