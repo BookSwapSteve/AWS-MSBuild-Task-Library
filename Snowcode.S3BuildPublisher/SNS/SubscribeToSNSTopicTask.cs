@@ -18,7 +18,7 @@ namespace Snowcode.S3BuildPublisher.SNS
         public string TopicArn { get; set; }
 
         /// <summary>
-        /// Gets or sets the protocol. Pptions are http, https, email, email-json, sqs
+        /// Gets or sets the protocol. Options are http, https, email, email-json, sqs
         /// </summary>
         [Required]
         public string Protocol { get; set; }

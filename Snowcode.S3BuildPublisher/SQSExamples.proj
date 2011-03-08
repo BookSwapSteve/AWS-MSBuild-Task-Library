@@ -13,6 +13,16 @@
     </CreateSQSQueueTask>
 
     <Message Text="Created Queue at : $(QueueUrl)" />
+
+    <!-- Now get the queue attributes -->
+    <GetSQSAttribuitesTask 
+        QueueUrl="$(QueueUrl)"
+        EncryptionContainerName ="MySecretContainer" >
+      <Output TaskParameter="QueueArn" PropertyName="QueueArn" />
+      <!-- TODO: Add more attributes -->
+    </GetSQSAttribuitesTask>
+
+    <Message Text="QueueArn : $(QueueArn)" />
   </Target>
 
   <!-- Delete a SQS Queue -->
@@ -104,5 +114,29 @@
       QueueUrl="$(QueueUrl)"
       ReceiptHandle="$(ReceiptHandle)"
       EncryptionContainerName ="MySecretContainer" />
+  </Target>
+
+
+
+  <PropertyGroup>
+    <!-- Replace this with a Arn for a SNS - this can be found on the SNS AWS console tab -->
+    <SourceArn>arn:aws:sns:us-east-1:956598608545:sqs_integration_test</SourceArn>
+  </PropertyGroup>
+  
+  <!-- Grant permission for a SNS notification to send to the quee-->
+  <Target Name="GrantSnsSentPermission">
+    <!-- Ensure the SQS queue exists -->
+    <CreateSQSQueueTask
+          QueueName="ExampleQueue"
+          EncryptionContainerName ="MySecretContainer" >
+              <Output TaskParameter="QueueUrl" PropertyName="QueueUrl" />
+    </CreateSQSQueueTask>
+
+    <Message Importance="High" Text="Using Queue : $(QueueUrl) " />
+    
+    <GrantSendMessageRightsTask
+        EncryptionContainerName ="MySecretContainer"
+        QueueUrl="$(QueueUrl)"
+        SourceArn="$(SourceArn)" />
   </Target>
 </Project>

@@ -54,11 +54,16 @@
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="ReceiveSQSMessageTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="WaitForSQSMessageTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSQSMessageTask" />
-  
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="GetSQSAttribuitesTask" />
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="GrantSendMessageRightsTask" />
+
   <!-- SimpleDB -->
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateSimpleDBDomainTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSimpleDBDomainTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="PutSimpleDBAttributeTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="GetSimpleDBAttributeTask" />
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="DeleteSimpleDBAttributesTask" />
+  
+  <!-- RDS -->
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateRDSDatabaseTask" />
 </Project>

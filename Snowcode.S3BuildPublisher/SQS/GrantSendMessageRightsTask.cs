@@ -1,14 +1,13 @@
 ﻿using System;
-using Amazon.SQS.Model;
 using Microsoft.Build.Framework;
 using Snowcode.S3BuildPublisher.Client;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {
     /// <summary>
-    /// MSBuild task to create a Simple Queue Service queue.
+    /// Allow the source send message to SQS (e.g. allow SNS to send 
     /// </summary>
-    public class CreateSQSQueueTask : AwsTaskBase
+    public class GrantSendMessageRightsTask : AwsTaskBase
     {
         #region Properties
 
@@ -16,25 +15,25 @@ namespace Snowcode.S3BuildPublisher.SQS
         /// Gets or sets the name of the queue to create.
         /// </summary>
         [Required]
-        public string QueueName { get; set; }
+        public string QueueUrl { get; set; }
 
         /// <summary>
-        /// Gets and sets the Queue Url returned from the CreateQueue service call.
+        /// Arn of the source (i.e. sns arn)
         /// </summary>
-        [Output]
-        public string QueueUrl { get; set; }
+        [Required]
+        public string SourceArn { get; set; }
 
         #endregion
 
         public override bool Execute()
         {
-            Log.LogMessage(MessageImportance.Normal, "Creating SQS Queue {0}", QueueName);
+            Log.LogMessage(MessageImportance.Normal, "Granting SendMessage rights to SQS Queue at {0}", QueueUrl);
 
             try
             {
                 AwsClientDetails clientDetails = GetClientDetails();
 
-                CreateQueue(clientDetails);
+                GrantRights(clientDetails);
 
                 return true;
             }
@@ -45,12 +44,12 @@ namespace Snowcode.S3BuildPublisher.SQS
             }
         }
 
-        private void CreateQueue(AwsClientDetails clientDetails)
+        private void GrantRights(AwsClientDetails clientDetails)
         {
             using (var helper = new SQSHelper(clientDetails))
             {
-                QueueUrl = helper.CreateQueue(QueueName);
-                Log.LogMessage(MessageImportance.Normal, "Creates SQS Queue {0} at {1}", QueueName, QueueUrl);
+                helper.GrantSendMessageRights(QueueUrl, SourceArn);
+                Log.LogMessage(MessageImportance.Normal, "Granted rights for source {0} to SendMessage to SQS at {1}", SourceArn, QueueUrl);
             }
         }
     }
