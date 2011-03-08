@@ -40,6 +40,11 @@ namespace Snowcode.S3BuildPublisher.EC2
         [Required]
         public string[] SecurityGroups { get; set; }
 
+        public string AvailabilityZone
+        {
+            get; set;
+        }
+
         /// <summary>
         /// MSBuild output parameter with the result of the InstanceId's that have been run.
         /// </summary>
@@ -74,7 +79,7 @@ namespace Snowcode.S3BuildPublisher.EC2
             using (var helper = new EC2Helper(clientDetails))
             {
                 // Run up the instances and return the InstanceId's
-                InstanceIds = helper.RunInstance(ImageId, NumberOfInstances, KeyName, UserData, SecurityGroups).ToArray();
+                InstanceIds = helper.RunInstance(ImageId, NumberOfInstances, KeyName, UserData, SecurityGroups, AvailabilityZone).ToArray();
                 Log.LogMessage(MessageImportance.Normal, "Run {0} Instances", NumberOfInstances);
             }
         }

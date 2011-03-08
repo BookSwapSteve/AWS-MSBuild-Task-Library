@@ -29,6 +29,11 @@ namespace Snowcode.S3BuildPublisher.EC2
             Client = AWSClientFactory.CreateAmazonEC2Client(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
         }
 
+        public EC2Helper(AmazonEC2 amazonEC2Client)
+        {
+            Client = amazonEC2Client;
+        }
+
         ~EC2Helper()
         {
             Dispose(false);
@@ -93,8 +98,9 @@ namespace Snowcode.S3BuildPublisher.EC2
         /// <param name="keyName"></param>
         /// <param name="userData"></param>
         /// <param name="securityGroups"></param>
+        /// <param name="availabilityZone">The AWS availability zone (us-east-1a, us-east-1b, us-east-1c, us-east-1d, eu-west-1a, eu-west-1b)</param>
         /// <returns>Returns a list of ALL instances not terminated, not just the ones started.</returns>
-        public List<string> RunInstance(string imageId, int numberOfInstances, string keyName, string userData, string[] securityGroups)
+        public List<string> RunInstance(string imageId, int numberOfInstances, string keyName, string userData, string[] securityGroups, string availabilityZone)
         {
             var request = new RunInstancesRequest
                               {
@@ -105,6 +111,11 @@ namespace Snowcode.S3BuildPublisher.EC2
                                   UserData = userData,
                                   SecurityGroup = new List<string>(securityGroups)
                               };
+
+            if (!string.IsNullOrEmpty(availabilityZone))
+            {
+                request.Placement = new Placement { AvailabilityZone = availabilityZone };
+            }
 
             RunInstancesResponse response = Client.RunInstances(request);
 
@@ -135,14 +146,14 @@ namespace Snowcode.S3BuildPublisher.EC2
 
         public RunningInstance DescribeInstance(string instanceId)
         {
-            var request = new DescribeInstancesRequest {InstanceId = new List<string> {instanceId}};
+            var request = new DescribeInstancesRequest { InstanceId = new List<string> { instanceId } };
 
             DescribeInstancesResponse response = Client.DescribeInstances(request);
 
             if (response.IsSetDescribeInstancesResult())
             {
                 Reservation reservation = response.DescribeInstancesResult.Reservation.FirstOrDefault();
-                if (reservation!=null)
+                if (reservation != null)
                 {
                     return reservation.RunningInstance.FirstOrDefault();
                 }

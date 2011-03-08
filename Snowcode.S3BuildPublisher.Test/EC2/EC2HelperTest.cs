@@ -57,8 +57,9 @@ namespace Snowcode.S3BuildPublisher.Test.EC2
             const string keyPair = "BookSwapPair1";
             const string securityGroup = "Basic";
             const string userData = "";
+            const string availabilityZone = "us-east-1a";
 
-            List<string> instances = ec2Helper.RunInstance(ami, 1, keyPair, userData, new string[] { securityGroup });
+            List<string> instances = ec2Helper.RunInstance(ami, 1, keyPair, userData, new string[] { securityGroup }, availabilityZone);
 
             Assert.IsNotEmpty(instances);
         }
