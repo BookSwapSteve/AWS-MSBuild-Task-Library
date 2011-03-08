@@ -1,0 +1,25 @@
+# Introduction
+
+S3 Build Publisher is a set of MSBuild tasks for publishing to Amazon's AWS S3 service, and has been extended to include EC2 support.
+
+# Details
+
+MSBuild tasks library to interface with Amazon's AWS products, including EC2, S3 and SQS
+
+To prevent the need for AWS credentials being stored in the MSBuild scripts the task StoreClientDetailsTask should be used to store the AWS client details in the local registry.
+
+Before you can use any of the tasks the credentials must be stored, this is a one off action on your build machine, but remember to re-run when your secret key changes.
+
+The secret key is encrypted with a salted container name, this container name must be supplied to any other AWS MSBuild task to ensure it can get the client connection credentials.
+
+Latest builds can be downloaded from:
+
+http://s3.amazonaws.com/MSBuild-S3-Publisher/MSBuild.AWS.Tasks.Release.zip
+
+This uses the MSBuild AWS S3 publishing task to push the build as it's created to S3. 
+
+
+#### Forked
+This is a fork from the original on SnowCode google code: http://code.google.com/p/snowcode/
+
+This is done so the project can have it's own identity and root rather than be mixed in with other projects.
