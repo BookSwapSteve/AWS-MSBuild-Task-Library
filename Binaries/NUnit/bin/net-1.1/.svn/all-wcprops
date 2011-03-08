@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1
+END
+nunit-console.exe.config
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/nunit-console.exe.config
+END
+agent.conf
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/agent.conf
+END
+runFile.exe
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/runFile.exe
+END
+NUnitTests.config
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/NUnitTests.config
+END
+NUnitFitTests.html
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/NUnitFitTests.html
+END
+runFile.exe.config
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/runFile.exe.config
+END
+pnunit-agent.exe
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/pnunit-agent.exe
+END
+pnunit-launcher.exe
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/pnunit-launcher.exe
+END
+pnunit-agent.exe.config
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/pnunit-agent.exe.config
+END
+pnunit-launcher.exe.config
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/pnunit-launcher.exe.config
+END
+test.conf
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/test.conf
+END
+nunit-agent.exe
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/nunit-agent.exe
+END
+NUnitTests.nunit
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/NUnitTests.nunit
+END
+nunit-console.exe
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/nunit-console.exe
+END
+nunit-agent.exe.config
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/nunit-agent.exe.config
+END

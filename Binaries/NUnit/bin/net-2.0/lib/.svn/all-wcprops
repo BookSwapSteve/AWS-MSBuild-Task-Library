@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib
+END
+nunit.fixtures.dll
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/nunit.fixtures.dll
+END
+nunit.core.interfaces.dll
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/nunit.core.interfaces.dll
+END
+skipped.png
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/skipped.png
+END
+nunit.util.dll
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/nunit.util.dll
+END
+inconclusive.png
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/inconclusive.png
+END
+log4net.dll
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/log4net.dll
+END
+nunit.uikit.dll
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/nunit.uikit.dll
+END
+success.png
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/success.png
+END
+fit.dll
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/fit.dll
+END
+nunit.core.dll
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/nunit.core.dll
+END
+nunit-gui-runner.dll
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/nunit-gui-runner.dll
+END
+nunit.uiexception.dll
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/nunit.uiexception.dll
+END
+failure.png
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/failure.png
+END
+ignored.png
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/ignored.png
+END
+nunit-console-runner.dll
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-2.0/lib/nunit-console-runner.dll
+END

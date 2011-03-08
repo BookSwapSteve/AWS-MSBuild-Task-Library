@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/framework
+END
+nunit.mocks.dll
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/framework/nunit.mocks.dll
+END
+nunit.framework.dll
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/framework/nunit.framework.dll
+END
+pnunit.framework.dll
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/framework/pnunit.framework.dll
+END
+nunit.framework.xml
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/19/trunk/3rdparty/nunit/bin/net-1.1/framework/nunit.framework.xml
+END
