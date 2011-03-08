@@ -28,6 +28,11 @@ namespace Snowcode.S3BuildPublisher.S3
             Client = AWSClientFactory.CreateAmazonS3Client(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
         }
 
+        public S3Helper(AmazonS3 amazonS3Client)
+        {
+            Client = amazonS3Client;
+        }
+
         ~S3Helper()
         {
             Dispose(false);

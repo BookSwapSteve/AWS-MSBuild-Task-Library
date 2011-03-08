@@ -27,6 +27,11 @@ namespace Snowcode.S3BuildPublisher.SNS
             Client = AWSClientFactory.CreateAmazonSNSClient(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
         }
 
+        public SNSHelper(AmazonSimpleNotificationService amazonSNSClient)
+        {
+            Client = amazonSNSClient;
+        }
+
         ~SNSHelper()
         {
             Dispose(false);

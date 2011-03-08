@@ -28,6 +28,11 @@ namespace Snowcode.S3BuildPublisher.SimpleDB
             Client = AWSClientFactory.CreateAmazonSimpleDBClient(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey);
         }
 
+        public SimpleDBHelper(AmazonSimpleDB amazonSimpleDBClient)
+        {
+            Client = amazonSimpleDBClient;
+        }
+
         ~SimpleDBHelper()
         {
             Dispose(false);
