@@ -50,20 +50,6 @@ namespace Snowcode.S3BuildPublisher.SQS
         }
 
         /// <summary>
-        /// Creates a SQS queue
-        /// </summary>
-        /// <param name="queueName"></param>
-        /// <returns></returns>
-        public string CreateQueue(string queueName)
-        {
-            var request = new CreateQueueRequest { QueueName = queueName };
-
-            CreateQueueResponse response = Client.CreateQueue(request);
-
-            return response.CreateQueueResult.QueueUrl;
-        }
-
-        /// <summary>
         /// Sets the permissions on the queue
         /// </summary>
         /// <param name="queueUrl"></param>
