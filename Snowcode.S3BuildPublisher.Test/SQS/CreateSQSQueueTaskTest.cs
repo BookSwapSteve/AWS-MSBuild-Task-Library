@@ -5,10 +5,9 @@ using Snowcode.S3BuildPublisher.SQS;
 namespace Snowcode.S3BuildPublisher.Test.SQS
 {
     [TestFixture]
+    [Category("IntegrationTest")]
     public class CreateSQSQueueTaskTest
     {
-        private const string Container = "MySecretContainer";
-
         [Test]
         [Ignore("Manual run test")]
         public void CreateQueue_Should_CreateQueue()
@@ -20,7 +19,7 @@ namespace Snowcode.S3BuildPublisher.Test.SQS
 
             var task = new CreateSQSQueueTask(awsClientFactory, logger)
                            {
-                               EncryptionContainerName = Container,
+                               EncryptionContainerName = TestHelper.EncryptionContainerName,
                                QueueName = "TestQ"
                            };
 
@@ -43,13 +42,13 @@ namespace Snowcode.S3BuildPublisher.Test.SQS
 
             var task = new CreateSQSQueueTask(awsClientFactory, logger)
             {
-                EncryptionContainerName = Container,
+                EncryptionContainerName = TestHelper.EncryptionContainerName,
                 QueueName = "TestQ"
             };
 
             var task2 = new CreateSQSQueueTask(awsClientFactory, logger)
             {
-                EncryptionContainerName = Container,
+                EncryptionContainerName = TestHelper.EncryptionContainerName,
                 QueueName = "TestQ"
             };
 
