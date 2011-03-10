@@ -1,7 +1,7 @@
-﻿using System;
-using Amazon.SQS.Model;
+﻿using Amazon.SQS.Model;
 using Microsoft.Build.Framework;
 using Snowcode.S3BuildPublisher.Client;
+using Snowcode.S3BuildPublisher.Logging;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {
@@ -10,6 +10,18 @@ namespace Snowcode.S3BuildPublisher.SQS
     /// </summary>
     public class CreateSQSQueueTask : AwsTaskBase
     {
+        #region Constructors
+
+        public CreateSQSQueueTask()
+            : base()
+        { }
+
+        public CreateSQSQueueTask(IAwsClientFactory awsClientFactory, ITaskLogger logger)
+            : base(awsClientFactory, logger)
+        { }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -26,32 +38,27 @@ namespace Snowcode.S3BuildPublisher.SQS
 
         #endregion
 
-        public override bool Execute()
+        protected override bool Execute(AwsClientDetails clientDetails)
         {
             Log.LogMessage(MessageImportance.Normal, "Creating SQS Queue {0}", QueueName);
 
-            try
+            using (var client = AwsClientFactory.CreateAmazonSQSClient(clientDetails.AwsAccessKeyId, clientDetails.AwsSecretAccessKey))
             {
-                AwsClientDetails clientDetails = GetClientDetails();
+                var request = new CreateQueueRequest { QueueName = QueueName };
 
-                CreateQueue(clientDetails);
+                CreateQueueResponse response = client.CreateQueue(request);
 
-                return true;
+                if (response.IsSetCreateQueueResult())
+                {
+                    QueueUrl = response.CreateQueueResult.QueueUrl;
+                    Log.LogMessage(MessageImportance.Normal, "Creates SQS Queue {0} at {1}", QueueName, QueueUrl);
+                    return true;
+                }
             }
-            catch (Exception ex)
-            {
-                Log.LogErrorFromException(ex);
-                return false;
-            }
-        }
 
-        private void CreateQueue(AwsClientDetails clientDetails)
-        {
-            using (var helper = new SQSHelper(clientDetails))
-            {
-                QueueUrl = helper.CreateQueue(QueueName);
-                Log.LogMessage(MessageImportance.Normal, "Creates SQS Queue {0} at {1}", QueueName, QueueUrl);
-            }
+            Log.LogMessage(MessageImportance.Normal, "Failed to create SQS Queue {0}", QueueName);
+            return false;
+
         }
     }
 }
