@@ -1,15 +1,14 @@
-﻿using System;
-using Amazon.IdentityManagement;
+﻿using Amazon.IdentityManagement;
 using Amazon.IdentityManagement.Model;
 using Microsoft.Build.Framework;
-using Snowcode.S3BuildPublisher.Client;
 using Snowcode.S3BuildPublisher.Logging;
 
 namespace Snowcode.S3BuildPublisher.IAM
 {
     /// <summary>
-    /// Create a user task
+    /// MSBuild task to create a new user for AWS
     /// </summary>
+    /// <seealso cref="http://docs.amazonwebservices.com/IAM/latest/APIReference/index.html?API_CreateUser.html"/>
     public class CreateUserTask : IamTaskBase
     {
         #region Constructors
@@ -50,27 +49,24 @@ namespace Snowcode.S3BuildPublisher.IAM
         #endregion
 
         #region Execute Methods
-
-        protected override bool Execute(AwsClientDetails clientDetails)
+        
+        protected override bool Execute(AmazonIdentityManagementService service)
         {
             Logger.LogMessage(MessageImportance.Normal, "Creating IAM User {0}", UserName);
 
-            using (AmazonIdentityManagementService service = GetService(clientDetails))
+            var request = new CreateUserRequest { UserName = UserName, Path = Path };
+            CreateUserResponse response = service.CreateUser(request);
+
+            if (response.CreateUserResult.User != null)
             {
-                var request = new CreateUserRequest { UserName = UserName, Path = Path };
-                CreateUserResponse response = service.CreateUser(request);
-
-                if (response.CreateUserResult.User != null)
-                {
-                    Arn = response.CreateUserResult.User.Arn;
-                    UserId = response.CreateUserResult.User.UserId;
-                    Logger.LogMessage(MessageImportance.Normal, "Created User with Arn: {0}", Arn);
-                    return true;
-                }
-
-                Logger.LogMessage(MessageImportance.Normal, "Failed to create User {0}", UserName);
-                return false;
+                Arn = response.CreateUserResult.User.Arn;
+                UserId = response.CreateUserResult.User.UserId;
+                Logger.LogMessage(MessageImportance.Normal, "Created User with Arn: {0}", Arn);
+                return true;
             }
+
+            Logger.LogMessage(MessageImportance.Normal, "Failed to create User {0}", UserName);
+            return false;
         }
 
         #endregion

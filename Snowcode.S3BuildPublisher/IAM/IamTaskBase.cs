@@ -3,7 +3,7 @@ using Snowcode.S3BuildPublisher.Client;
 
 namespace Snowcode.S3BuildPublisher.IAM
 {
-    public class IamTaskBase : AwsTaskBase
+    public abstract class IamTaskBase : AwsTaskBase
     {
         #region Constructors
 
@@ -14,6 +14,16 @@ namespace Snowcode.S3BuildPublisher.IAM
         { }
 
         #endregion
+
+        protected override bool Execute(AwsClientDetails clientDetails)
+        {
+            using (AmazonIdentityManagementService client = GetService(clientDetails))
+            {
+                return Execute(client);
+            }
+        }
+
+        protected abstract bool Execute(AmazonIdentityManagementService service);
 
         protected AmazonIdentityManagementService GetService(AwsClientDetails clientDetails)
         {
