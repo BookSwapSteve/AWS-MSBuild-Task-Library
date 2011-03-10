@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Amazon;
 using Amazon.RDS;
@@ -54,7 +53,7 @@ namespace Snowcode.S3BuildPublisher.RDS
         {
             CreateDBInstanceResponse response = Client.CreateDBInstance(request);
 
-            if (response.IsSetCreateDBInstanceResult())
+            if (response.CreateDBInstanceResult!=null)
             {
                 return response.CreateDBInstanceResult.DBInstance;
             }

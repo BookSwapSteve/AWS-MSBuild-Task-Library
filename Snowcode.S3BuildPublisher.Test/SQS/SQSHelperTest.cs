@@ -14,37 +14,6 @@ namespace Snowcode.S3BuildPublisher.Test.SQS
 
         [Test]
         [Ignore("Manual run test")]
-        public void CreateQueue_Should_CreateQueue()
-        {
-            var store = new ClientDetailsStore();
-            AwsClientDetails clientDetails = store.Load(Container);
-
-            SQSHelper helper = new SQSHelper(clientDetails);
-
-            string queueUrl = helper.CreateQueue("TestQ");
-
-            System.Diagnostics.Debug.WriteLine(queueUrl, "queueUrl:");
-
-            Assert.IsNotEmpty(queueUrl);
-        }
-
-        [Test]
-        [Ignore("Manual run test")]
-        public void CreateQueueTwice_Should_Succeed()
-        {
-            var store = new ClientDetailsStore();
-            AwsClientDetails clientDetails = store.Load(Container);
-
-            SQSHelper helper = new SQSHelper(clientDetails);
-
-            string url1 = helper.CreateQueue("TestQ2");
-            string url2 = helper.CreateQueue("TestQ2");
-
-            Assert.AreEqual(url1, url2, "Url's should match");
-        }
-
-        [Test]
-        [Ignore("Manual run test")]
         public void DeleteQueue_Should_DeleteQueue()
         {
             var store = new ClientDetailsStore();
@@ -53,7 +22,7 @@ namespace Snowcode.S3BuildPublisher.Test.SQS
             SQSHelper helper = new SQSHelper(clientDetails);
 
             // Qreate a queue to delete.
-            string queueUrl = helper.CreateQueue("TestQ");
+            string queueUrl = TestHelper.CreateQueue("TestQ", Container);
 
             helper.DeleteQueue(queueUrl);
         }
@@ -69,7 +38,7 @@ namespace Snowcode.S3BuildPublisher.Test.SQS
 
 
             const string messageBody = "TestMessageBody";
-            string queueUrl = helper.CreateQueue("TestQ");
+            string queueUrl = TestHelper.CreateQueue("TestQ", Container);
 
             string messageId = helper.SendMessage(messageBody, queueUrl);
 
@@ -85,7 +54,7 @@ namespace Snowcode.S3BuildPublisher.Test.SQS
 
             SQSHelper helper = new SQSHelper(clientDetails);
 
-            string queueUrl = helper.CreateQueue("TestQ");
+            string queueUrl = TestHelper.CreateQueue("TestQ", Container);
 
             // Add a message to the queue to ensure that their is one and wait for 2 seconds to allow
             // the message to propogate.
@@ -126,7 +95,7 @@ namespace Snowcode.S3BuildPublisher.Test.SQS
 
             SQSHelper helper = new SQSHelper(clientDetails);
 
-            string queueUrl = helper.CreateQueue("TestQ");
+            string queueUrl = TestHelper.CreateQueue("TestQ", Container);
 
             // Get the sent message.
             helper.WaitForMessage(queueUrl, 10, 5);

@@ -31,10 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AWSSDK, Version=1.0.8.0, Culture=neutral, PublicKeyToken=cd2d24cd2bace800, processorArchitecture=MSIL">
+    <Reference Include="AWSSDK, Version=1.2.3.2, Culture=neutral, PublicKeyToken=cd2d24cd2bace800, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Binaries\AmazonS3\AWSSDK.dll</HintPath>
+      <HintPath>..\Binaries\AWS SDK for .NET\1.2.3.2\AWSSDK.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities.v3.5" />
     <Reference Include="nunit.framework">
       <HintPath>..\Binaries\NUnit\nunit.framework.dll</HintPath>
     </Reference>
@@ -49,12 +51,15 @@
     <Compile Include="ClientDetailsStoreTests.cs" />
     <Compile Include="EC2\EC2HelperTest.cs" />
     <Compile Include="EncryptionHelperTests.cs" />
+    <Compile Include="IAM\CreateUserTaskTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RDS\RDSHelperTest.cs" />
     <Compile Include="S3\S3HelperTest.cs" />
     <Compile Include="SimpleDB\SimpleDBHelperTest.cs" />
     <Compile Include="SNS\SNSHelperTest.cs" />
+    <Compile Include="SQS\CreateSQSQueueTaskTest.cs" />
     <Compile Include="SQS\SQSHelperTest.cs" />
+    <Compile Include="TestHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Snowcode.S3BuildPublisher\Snowcode.S3BuildPublisher.csproj">
