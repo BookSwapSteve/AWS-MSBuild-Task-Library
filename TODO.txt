@@ -1,0 +1,11 @@
+Add support for identity management (create user etc).
+
+Improve RDS support
+
+Refector helpers, perhaps put task specific code into the tasks execute method and inject a AWSClientFactory to the task to improve testing at the task level.
+
+Allow Aws credentials to be embedded in the msbuild scripts or use the secure container. Have the base class check for awskey and use that if supplied.
+
+Update dll name and namespace as it's no longer just an S3BuildPublisher
+
+Update tasks project readme.txt file
