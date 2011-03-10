@@ -1,4 +1,6 @@
 ﻿using System;
+using Amazon.SQS;
+using Amazon.SQS.Model;
 using Microsoft.Build.Framework;
 using Snowcode.S3BuildPublisher.Client;
 
@@ -7,7 +9,7 @@ namespace Snowcode.S3BuildPublisher.SQS
     /// <summary>
     /// MSBuild task to delete a message from a queue.
     /// </summary>
-    public class DeleteSQSMessageTask : AwsTaskBase
+    public class DeleteSQSMessageTask :  SqsTaskBase
     {
         #region Properties
 
@@ -25,33 +27,16 @@ namespace Snowcode.S3BuildPublisher.SQS
 
         #endregion
 
-        public override bool Execute()
+        protected override bool Execute(AmazonSQS client)
         {
-            Log.LogMessage(MessageImportance.Normal, "Deleting message {0} from Queue {1}", ReceiptHandle, QueueUrl);
+            Logger.LogMessage(MessageImportance.Normal, "Deleting message {0} from Queue {1}", ReceiptHandle, QueueUrl);
 
-            try
-            {
-                AwsClientDetails clientDetails = GetClientDetails();
+            var request = new DeleteMessageRequest { QueueUrl = QueueUrl, ReceiptHandle = ReceiptHandle };
+            client.DeleteMessage(request);
 
-                DeleteMessage(clientDetails);
+            Logger.LogMessage(MessageImportance.Normal, "Deleted message {0} from queue {1}", ReceiptHandle, QueueUrl);
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.LogErrorFromException(ex);
-                return false;
-            }
-        }
-
-        private void DeleteMessage(AwsClientDetails clientDetails)
-        {
-            using (var helper = new SQSHelper(clientDetails))
-            {
-                helper.DeleteMessage(QueueUrl, ReceiptHandle);
-
-                Log.LogMessage(MessageImportance.Normal, "Deleted message {0} from queue {1}", ReceiptHandle, QueueUrl);
-            }
+            return true;
         }
     }
 }

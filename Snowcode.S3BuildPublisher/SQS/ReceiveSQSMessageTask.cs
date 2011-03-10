@@ -1,14 +1,28 @@
-﻿using System;
+﻿using System.Linq;
+using Amazon.SQS;
+using Amazon.SQS.Model;
 using Microsoft.Build.Framework;
-using Snowcode.S3BuildPublisher.Client;
+using Snowcode.S3BuildPublisher.Logging;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {
     /// <summary>
     /// MSBuild task to receive a message from a queue.  
     /// </summary>
-    public class ReceiveSQSMessageTask : AwsTaskBase
+    public class ReceiveSQSMessageTask : SqsTaskBase
     {
+        #region Constructors
+
+        public ReceiveSQSMessageTask()
+            : base()
+        { }
+
+        public ReceiveSQSMessageTask(IAwsClientFactory awsClientFactory, ITaskLogger logger)
+            : base(awsClientFactory, logger)
+        { }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -43,47 +57,40 @@ namespace Snowcode.S3BuildPublisher.SQS
 
         #endregion
 
-        public override bool Execute()
+        protected override bool Execute(AmazonSQS client)
         {
-            Log.LogMessage(MessageImportance.Normal, "Receiving message from Queue {0}", QueueUrl);
+            Logger.LogMessage(MessageImportance.Normal, "Receiving message from Queue {0}", QueueUrl);
 
-            try
+            var request = new ReceiveMessageRequest { MaxNumberOfMessages = 1, QueueUrl = QueueUrl };
+            ReceiveMessageResponse response = client.ReceiveMessage(request);
+
+            if (response.IsSetReceiveMessageResult())
             {
-                AwsClientDetails clientDetails = GetClientDetails();
-
-                ReceiveMessage(clientDetails);
-
-                return true;
+                Message message = response.ReceiveMessageResult.Message.FirstOrDefault();
+                ProcessMessage(message);
             }
-            catch (Exception ex)
-            {
-                Log.LogErrorFromException(ex);
-                return false;
-            }
+
+            // return true even if no message received as the task executed ok.
+            return true;
         }
 
-        private void ReceiveMessage(AwsClientDetails clientDetails)
+        private void ProcessMessage(Message message)
         {
-            using (var helper = new SQSHelper(clientDetails))
+            if (message != null)
             {
-                Amazon.SQS.Model.Message message = helper.ReceiveMessage(QueueUrl);
-
-                if (message != null)
-                {
-                    MessageId = message.MessageId;
-                    MessageBody = message.Body;
-                    ReceiptHandle = message.ReceiptHandle;
-                    HasMessage = true;
-                    Log.LogMessage(MessageImportance.Normal, "Recieved message {0} from queue {1}", MessageId, QueueUrl);
-                }
-                else
-                {
-                    MessageId = string.Empty;
-                    MessageBody = string.Empty;
-                    ReceiptHandle = string.Empty;
-                    HasMessage = false;
-                    Log.LogMessage(MessageImportance.Normal, "No message received from queue {0}", QueueUrl);
-                }
+                MessageId = message.MessageId;
+                MessageBody = message.Body;
+                ReceiptHandle = message.ReceiptHandle;
+                HasMessage = true;
+                Logger.LogMessage(MessageImportance.Normal, "Recieved message {0} from queue {1}", MessageId, QueueUrl);
+            }
+            else
+            {
+                MessageId = string.Empty;
+                MessageBody = string.Empty;
+                ReceiptHandle = string.Empty;
+                HasMessage = false;
+                Logger.LogMessage(MessageImportance.High, "No message received from queue {0}", QueueUrl);
             }
         }
     }

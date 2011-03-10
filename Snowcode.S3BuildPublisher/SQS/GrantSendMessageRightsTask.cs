@@ -1,13 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Amazon.SQS;
+using Amazon.SQS.Model;
 using Microsoft.Build.Framework;
-using Snowcode.S3BuildPublisher.Client;
+using Attribute = Amazon.SQS.Model.Attribute;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {
     /// <summary>
-    /// Allow the source send message to SQS (e.g. allow SNS to send 
+    /// MSBuild Task to allow the source send message to SQS (e.g. allow SNS to send to SQS)
     /// </summary>
-    public class GrantSendMessageRightsTask : AwsTaskBase
+    /// <seealso cref="http://www.elastician.com/2010/04/subscribing-sqs-queue-to-sns-topic.html"/>
+    public class GrantSendMessageRightsTask : SqsTaskBase
     {
         #region Properties
 
@@ -25,32 +31,60 @@ namespace Snowcode.S3BuildPublisher.SQS
 
         #endregion
 
-        public override bool Execute()
+        protected override bool Execute(AmazonSQS client)
         {
             Log.LogMessage(MessageImportance.Normal, "Granting SendMessage rights to SQS Queue at {0}", QueueUrl);
 
-            try
-            {
-                AwsClientDetails clientDetails = GetClientDetails();
+            string queueArn = GetQueueArn(client, QueueUrl);
+            Log.LogMessage(MessageImportance.Low, "Queue {0} Arn: {1}", QueueUrl, queueArn);
 
-                GrantRights(clientDetails);
+            var request = new SetQueueAttributesRequest { QueueUrl = QueueUrl };
+            var attribute = new Attribute { Name = "Policy", Value = ConstructPolicy(queueArn, SourceArn) };
+            request.Attribute = new List<Attribute> { attribute };
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.LogErrorFromException(ex);
-                return false;
-            }
+            client.SetQueueAttributes(request);
+
+            Logger.LogMessage(MessageImportance.Normal, "Granted rights for source {0} to SendMessage to SQS at {1}", SourceArn, QueueUrl);
+
+            return true;
         }
 
-        private void GrantRights(AwsClientDetails clientDetails)
+        private string ConstructPolicy(string queueArn, string sourceArn)
         {
-            using (var helper = new SQSHelper(clientDetails))
+            var policy = new StringBuilder();
+            policy.Append("{");
+            policy.Append("\"Version\":\"2008-10-17\",");
+            policy.Append("\"Id\":\"MyQueuePolicy\",");
+            policy.Append("\"Statement\" : [");
+            policy.Append("{");
+            policy.Append("\"Sid\":\"Allow-SNS-SendMessage\",");
+            policy.Append("\"Effect\":\"Allow\",");
+            policy.Append("\"Principal\" : {\"AWS\": \"*\"},");
+            policy.Append("\"Action\":[\"sqs:SendMessage\"],");
+            policy.AppendFormat("\"Resource\": \"{0}\",", queueArn);
+            policy.Append("\"Condition\" : {");
+            policy.Append("\"ArnEquals\" : {");
+            policy.AppendFormat("\"aws:SourceArn\":\"{0}\"", sourceArn);
+            policy.Append("}");
+            policy.Append("}");
+            policy.Append("}");
+            policy.Append("]");
+            policy.Append("}");
+
+            return policy.ToString();
+        }
+
+        private string GetQueueArn(AmazonSQS client, string queueUrl)
+        {
+            var request = new GetQueueAttributesRequest { QueueUrl = queueUrl, AttributeName = new List<string>(new[] { "QueueArn" }) };
+            GetQueueAttributesResponse response = client.GetQueueAttributes(request);
+
+            if (response.IsSetGetQueueAttributesResult())
             {
-                helper.GrantSendMessageRights(QueueUrl, SourceArn);
-                Log.LogMessage(MessageImportance.Normal, "Granted rights for source {0} to SendMessage to SQS at {1}", SourceArn, QueueUrl);
+                return response.GetQueueAttributesResult.Attribute.Where(x => x.Name == "QueueArn").First().Value;
             }
+
+            throw new Exception("No SetQueueAttribute result");
         }
     }
 }

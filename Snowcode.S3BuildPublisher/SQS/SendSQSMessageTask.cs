@@ -1,14 +1,27 @@
-﻿using System;
+﻿using Amazon.SQS;
+using Amazon.SQS.Model;
 using Microsoft.Build.Framework;
-using Snowcode.S3BuildPublisher.Client;
+using Snowcode.S3BuildPublisher.Logging;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {
     /// <summary>
     /// MSBuild task to send a message to a SQS Queue.
     /// </summary>
-    public class SendSQSMessageTask : AwsTaskBase
+    public class SendSQSMessageTask : SqsTaskBase
     {
+        #region Constructors
+
+        public SendSQSMessageTask()
+            : base()
+        { }
+
+        public SendSQSMessageTask(IAwsClientFactory awsClientFactory, ITaskLogger logger)
+            : base(awsClientFactory, logger)
+        { }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -31,32 +44,22 @@ namespace Snowcode.S3BuildPublisher.SQS
 
         #endregion
 
-        public override bool Execute()
+        protected override bool Execute(AmazonSQS client)
         {
-            Log.LogMessage(MessageImportance.Normal, "Sending message to Queue {0}", QueueUrl);
+            var request = new SendMessageRequest { MessageBody = MessageBody, QueueUrl = QueueUrl };
 
-            try
+            SendMessageResponse response = client.SendMessage(request);
+
+            if (response.IsSetSendMessageResult())
             {
-                AwsClientDetails clientDetails = GetClientDetails();
+                MessageId = response.SendMessageResult.MessageId;
 
-                SendMessage(clientDetails);
-
+                Logger.LogMessage(MessageImportance.Normal, "Sent message {0} to Queue {1}", MessageId, QueueUrl);
                 return true;
             }
-            catch (Exception ex)
-            {
-                Log.LogErrorFromException(ex);
-                return false;
-            }
-        }
 
-        private void SendMessage(AwsClientDetails clientDetails)
-        {
-            using (var helper = new SQSHelper(clientDetails))
-            {
-                MessageId = helper.SendMessage(MessageBody, QueueUrl);
-                Log.LogMessage(MessageImportance.Normal, "Sent message to Queue {0}", QueueUrl);
-            }
+            Logger.LogMessage(MessageImportance.High, "Message failed to send to to Queue {0}", QueueUrl);
+            return false;
         }
     }
 }

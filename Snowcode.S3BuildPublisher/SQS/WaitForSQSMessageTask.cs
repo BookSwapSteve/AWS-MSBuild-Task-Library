@@ -1,14 +1,30 @@
 ﻿using System;
+using System.Linq;
+using System.Threading;
+using Amazon.SQS;
+using Amazon.SQS.Model;
 using Microsoft.Build.Framework;
-using Snowcode.S3BuildPublisher.Client;
+using Snowcode.S3BuildPublisher.Logging;
 
 namespace Snowcode.S3BuildPublisher.SQS
 {
     /// <summary>
     /// MSBuild task to wait for a message on the SQS Queue
     /// </summary>
-    public class WaitForSQSMessageTask : AwsTaskBase
+    public class WaitForSQSMessageTask : SqsTaskBase
     {
+        #region Constructors
+
+        public WaitForSQSMessageTask()
+            : base()
+        { }
+
+        public WaitForSQSMessageTask(IAwsClientFactory awsClientFactory, ITaskLogger logger)
+            : base(awsClientFactory, logger)
+        { }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -49,36 +65,63 @@ namespace Snowcode.S3BuildPublisher.SQS
 
         #endregion
 
-        public override bool Execute()
+        protected override bool Execute(AmazonSQS client)
         {
-            Log.LogMessage(MessageImportance.High, "Waiting to receive a message from Queue {0}, Poll interval {1} seconds, Timeout in {2} seconds", QueueUrl, PollIntervalSeconds, TimeOutSeconds);
+            Logger.LogMessage(MessageImportance.High, "Waiting to receive a message from Queue {0}, Poll interval {1} seconds, Timeout in {2} seconds", QueueUrl, PollIntervalSeconds, TimeOutSeconds);
 
-            try
-            {
-                AwsClientDetails clientDetails = GetClientDetails();
+            Message message = WaitForMessage(client);
 
-                ReceiveMessage(clientDetails);
+            MessageId = message.MessageId;
+            MessageBody = message.Body;
+            ReceiptHandle = message.ReceiptHandle;
+            Logger.LogMessage(MessageImportance.Normal, "Recieved message {0} from queue {1}", MessageId, QueueUrl);
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.LogErrorFromException(ex);
-                return false;
-            }
+            return true;
         }
 
-        private void ReceiveMessage(AwsClientDetails clientDetails)
+        /// <summary>
+        /// Wait for a message on the Queue
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
+        /// <exception cref="TimeoutException">thrown if timeOutSeconds is exceeded.</exception>
+        private Message WaitForMessage(AmazonSQS client)
         {
-            using (var helper = new SQSHelper(clientDetails))
-            {
-                Amazon.SQS.Model.Message message = helper.WaitForMessage(QueueUrl, TimeOutSeconds, PollIntervalSeconds);
+            DateTime waitUntil = DateTime.Now.AddSeconds(TimeOutSeconds);
 
-                MessageId = message.MessageId;
-                MessageBody = message.Body;
-                ReceiptHandle = message.ReceiptHandle;
-                Log.LogMessage(MessageImportance.Normal, "Recieved message {0} from queue {1}", MessageId, QueueUrl);
+            do
+            {
+                Message message = ReceiveMessage(client);
+
+                if (message != null)
+                {
+                    return message;
+                }
+
+                Thread.Sleep(new TimeSpan(0, 0, PollIntervalSeconds));
+
+            } while (DateTime.Now <= waitUntil);
+
+            throw new TimeoutException(string.Format("Timeout waiting for a message on the Queue {0}", QueueUrl));
+        }
+
+        /// <summary>
+        /// Receives a message from the SQS Queue
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="queueUrl"></param>
+        /// <returns></returns>
+        private Message ReceiveMessage(AmazonSQS client)
+        {
+            var request = new ReceiveMessageRequest { MaxNumberOfMessages = 1, QueueUrl = QueueUrl };
+
+            ReceiveMessageResponse response = client.ReceiveMessage(request);
+
+            if (response.IsSetReceiveMessageResult())
+            {
+                return response.ReceiveMessageResult.Message.FirstOrDefault();
             }
+            return null;
         }
     }
 }

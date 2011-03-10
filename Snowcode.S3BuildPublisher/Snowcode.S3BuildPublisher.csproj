@@ -106,7 +106,7 @@
     <Compile Include="SQS\GrantSendMessageRightsTask.cs" />
     <Compile Include="SQS\ReceiveSQSMessageTask.cs" />
     <Compile Include="SQS\SendSQSMessageTask.cs" />
-    <Compile Include="SQS\SQSHelper.cs" />
+    <Compile Include="SQS\SqsTaskBase.cs" />
     <Compile Include="SQS\WaitForSQSMessageTask.cs" />
   </ItemGroup>
   <ItemGroup>
