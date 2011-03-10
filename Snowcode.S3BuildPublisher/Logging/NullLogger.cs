@@ -7,10 +7,14 @@ namespace Snowcode.S3BuildPublisher.Logging
     public class NullLogger : ITaskLogger
     {
         public void LogMessage(MessageImportance messageImportance, string message, params object[] messageArgs)
-        { }
+        {
+            Debug.WriteLine(string.Format(message, messageArgs));
+        }
 
         public void LogMessage(string message, params object[] messageArgs)
-        { }
+        {
+            Debug.WriteLine(string.Format(message, messageArgs));
+        }
 
         public void LogErrorFromException(Exception exception)
         {
