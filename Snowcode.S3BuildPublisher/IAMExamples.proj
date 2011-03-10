@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project DefaultTargets="Debug" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project=".\Snowcode.S3BuildPublisher.Tasks.Targets" />
+  
+  <!-- Identity Access Managment Examples -->
+
+  <PropertyGroup>
+    <EncryptionContainerName>BuildMachineNet</EncryptionContainerName>
+  </PropertyGroup>
+
+  <!-- Create a user -->
+  <Target Name="CreateUser">
+
+    <CreateUserTask UserName="NewTestUser" EncryptionContainerName ="$(EncryptionContainerName)">
+        <Output TaskParameter="Arn" PropertyName="Arn" />
+        <Output TaskParameter="UserId" PropertyName="UserId"/>
+    </CreateUserTask>
+
+      <Message Text="Created user with UserId : $(UserId)" />
+      <Message Text="Created user with Arn : $(Arn)" />
+  </Target>
+
+</Project>
