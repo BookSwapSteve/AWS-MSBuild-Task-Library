@@ -58,7 +58,10 @@
     <Compile Include="SimpleDB\SimpleDBHelperTest.cs" />
     <Compile Include="SNS\SNSHelperTest.cs" />
     <Compile Include="SQS\CreateSQSQueueTaskTest.cs" />
-    <Compile Include="SQS\SQSHelperTest.cs" />
+    <Compile Include="SQS\DeleteSQSQueueTaskTest.cs" />
+    <Compile Include="SQS\ReceiveSQSMessageTaskTest.cs" />
+    <Compile Include="SQS\SendSQSMessageTaskTest.cs" />
+    <Compile Include="SQS\WaitForSQSMessageTaskTest.cs" />
     <Compile Include="TestHelper.cs" />
   </ItemGroup>
   <ItemGroup>
