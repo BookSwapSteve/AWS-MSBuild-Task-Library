@@ -66,4 +66,7 @@
   
   <!-- RDS -->
   <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateRDSDatabaseTask" />
+  
+  <!-- IAM -->
+  <UsingTask AssemblyFile="$(S3BuildPublisherLibrary)" TaskName="CreateUserTask" />
 </Project>
