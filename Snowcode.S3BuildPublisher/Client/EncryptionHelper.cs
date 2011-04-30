@@ -41,11 +41,14 @@ namespace Snowcode.S3BuildPublisher.Client
         /// <summary>
         /// Decrypts the value passed in.
         /// </summary>
-        /// <param name="containerName">The container name storing the </param>
+        /// <param name="password">The pasword to use to decrypt the value</param>
         /// <param name="toDecrypt">The encrypted value to decrypt.  Base64 encoded</param>
         /// <returns></returns>
         public static string Decrypt(string password, string toDecrypt)
         {
+            if (password == null) throw new ArgumentNullException("password");
+            if (toDecrypt == null) throw new ArgumentNullException("toDecrypt");
+
             var parameters = new CspParameters { KeyContainerName = SaltedPassword(password) };
             var cryptoServiceProvider = new RSACryptoServiceProvider(parameters);
 

@@ -65,6 +65,8 @@ namespace Snowcode.S3BuildPublisher.Client
         /// <returns>Aws Client Details</returns>
         public AwsClientDetails Load(string containerName)
         {
+            if (containerName == null) throw new ArgumentNullException("containerName");
+
             using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(RegistrySubKey))
             {
                 if (registryKey == null)
@@ -75,7 +77,17 @@ namespace Snowcode.S3BuildPublisher.Client
                 var clientDetails = new AwsClientDetails();
 
                 clientDetails.AwsAccessKeyId = (string)registryKey.GetValue(AccessKeyIdKeyName);
+                if (string.IsNullOrEmpty(clientDetails.AwsAccessKeyId))
+                {
+                    throw new InvalidOperationException("Stored AWS Access key is not valid");
+                }
+
                 var encrypredPassword = (string)registryKey.GetValue(SecretAccessKeyKeyName);
+                if (string.IsNullOrEmpty(encrypredPassword))
+                {
+                    throw new InvalidOperationException("Stored AWS Secret Access Key is not valid");
+                }
+
                 clientDetails.AwsSecretAccessKey = EncryptionHelper.Decrypt(containerName, encrypredPassword);
 
                 return clientDetails;
