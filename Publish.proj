@@ -10,9 +10,14 @@
 
 	Once run the release output files will be published to S3 and will be publically accessible through the bucket name -->
 
+
+  <PropertyGroup>
+    <MSBuildCommunityTasksPath>.</MSBuildCommunityTasksPath>
+  </PropertyGroup>
+  <Import Project=".\Binaries\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+
   <UsingTask TaskName="S3BuildPublisher" AssemblyFile=".\Snowcode.S3BuildPublisher\bin\Release\Snowcode.S3BuildPublisher.dll"/>
   <UsingTask TaskName="StoreClientDetailsTask" AssemblyFile=".\Snowcode.S3BuildPublisher\bin\Release\Snowcode.S3BuildPublisher.dll"/>
-  <Import Project="..\..\3rdparty\msbuild\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
 
   <PropertyGroup>
     <Bucket>MSBuild-S3-Publisher</Bucket>
